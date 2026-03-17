@@ -110,10 +110,6 @@ app.use(session({
 
 // ... (тут твій код API)
 
-app.listen(PORT, () => {
-    console.log(`Сервер запущено на http://localhost:${PORT}`);
-});
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
