@@ -1,0 +1,16 @@
+{
+  "name": "student-schedule",
+  "version": "1.0.0",
+  "description": "Розклад занять",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mysql2": "^3.6.0"
+  }
+}

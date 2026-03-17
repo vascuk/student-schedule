@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адмін панель - Нововолинський електромеханічний фаховий коледж</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Шапка */
+        .admin-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-header h1 span {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Вкладки */
+        .tabs {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 30px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #1e293b;
+        }
+
+        .tab.active {
+            color: #38bdf8;
+            border-bottom-color: #38bdf8;
+        }
+
+        /* Контент */
+        .content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Форма входу */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .login-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px #0f172a;
+        }
+
+        /* Форми */
+        .form-group {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group h3 {
+            margin-bottom: 20px;
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-add {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px #0f172a;
+        }
+
+        .btn-delete {
+            padding: 6px 16px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: none;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        .btn-edit {
+            padding: 6px 16px;
+            background: #fef9c3;
+            color: #854d0e;
+            border: none;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: #fde047;
+        }
+
+        /* Списки */
+        .items-list {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            font-size: 15px;
+            color: #1e293b;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Розклад - КАРТКИ ДНІВ */
+        .group-select {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .group-select select {
+            width: 300px;
+            margin-bottom: 0;
+        }
+
+        .days-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 1600px) {
+            .days-cards {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .days-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .days-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .pairs-list {
+            padding: 15px;
+        }
+
+        .pair-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .pair-card.substitution-active {
+            background: #fff1f0;
+            border-color: #fecaca;
+        }
+
+        .pair-number {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .substitution-active .pair-number {
+            color: #b91c1c;
+        }
+
+        .pair-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-edit-pair {
+            padding: 4px 10px;
+            background: #fef9c3;
+            color: #854d0e;
+            border: none;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-delete-pair {
+            padding: 4px 10px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: none;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-substitution {
+            padding: 4px 10px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: none;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Стилі для чергування */
+        .alternating-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .alternating-container>div {
+            flex: 1;
+            min-width: 0;
+            padding: 10px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-title {
+            font-weight: 600;
+            font-size: 11px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .numerator-title {
+            color: #0369a1;
+        }
+
+        .denominator-title {
+            color: #9a3412;
+        }
+
+        .block-subject {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 4px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .block-details {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        /* МОДАЛЬНЕ ВІКНО */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 700px;
+            max-width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .day-pair-selector {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .day-pair-selector select {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* Типи пар */
+        .pair-type-section {
+            margin-bottom: 20px;
+        }
+
+        .pair-type-header {
+            background: #f8fafc;
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pair-type-header input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: #38bdf8;
+        }
+
+        .pair-type-header label {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1e293b;
+            cursor: pointer;
+        }
+
+        .pair-type-content {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pair-type-content.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .block-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .week-block {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .week-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid;
+            font-size: 14px;
+        }
+
+        .numerator-title {
+            color: #0369a1;
+            border-bottom-color: #0369a1;
+        }
+
+        .denominator-title {
+            color: #9a3412;
+            border-bottom-color: #9a3412;
+        }
+
+        .komplekt-item {
+            background: #f8fafc;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .komplekt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .remove-komplekt {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-komplekt-btn {
+            width: 100%;
+            padding: 10px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .add-komplekt-btn:hover {
+            background: #bae6fd;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-cancel {
+            padding: 12px 30px;
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Заміни */
+        .substitutions-list {
+            margin-top: 20px;
+        }
+
+        .substitution-item {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #38bdf8;
+            border: 1px solid #e2e8f0;
+        }
+
+        .substitution-item strong {
+            color: #1e293b;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Форма входу -->
+    <div class="login-container" id="loginForm">
+        <h2>Вхід в адмін панель</h2>
+        <input type="text" id="username" placeholder="Логін" value="admin">
+        <input type="password" id="password" placeholder="Пароль" value="admin123">
+        <button onclick="login()">Увійти</button>
+    </div>
+
+    <!-- Адмін панель -->
+    <div class="admin-panel" id="adminPanel" style="display: none;">
+        <div class="admin-header">
+            <h1>Нововолинський <span>електромеханічний</span> фаховий коледж</h1>
+            <button class="logout-btn" onclick="logout()">Вийти</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('groups')">Групи</div>
+            <div class="tab" onclick="showTab('templates')">Комплекти</div>
+            <div class="tab" onclick="showTab('schedule')">Розклад</div>
+            <div class="tab" onclick="showTab('substitutions')">Заміни</div>
+        </div>
+
+        <div class="content">
+            <!-- Групи -->
+            <div id="groupsTab" style="display: block;">
+                <div class="form-group">
+                    <h3>Додати групу</h3>
+                    <input type="text" id="groupName" placeholder="Назва групи (наприклад: ІПЗ-21)">
+                    <button class="btn-add" onclick="addGroup()">Додати групу</button>
+                </div>
+                <div class="items-list" id="groupsList"></div>
+            </div>
+
+            <!-- Комплекти -->
+            <div id="templatesTab" style="display: none;">
+                <div class="form-group">
+                    <h3>Додати комплект</h3>
+                    <input type="text" id="templateSubject" placeholder="Предмет (наприклад: Математика)">
+                    <input type="text" id="templateRoom" placeholder="Аудиторія (наприклад: 101)">
+                    <input type="text" id="templateTeacher" placeholder="Викладач (наприклад: Іванов І.І.)">
+                    <button class="btn-add" onclick="addTemplate()">Додати комплект</button>
+                </div>
+                <div class="items-list" id="templatesList"></div>
+            </div>
+
+            <!-- Розклад -->
+            <div id="scheduleTab" style="display: none;">
+                <div class="group-select">
+                    <select id="scheduleGroupSelect" onchange="loadSchedule()">
+                        <option value="">-- Виберіть групу --</option>
+                    </select>
+                </div>
+
+                <div id="daysCards" class="days-cards"></div>
+            </div>
+
+            <!-- Заміни -->
+            <div id="substitutionsTab" style="display: none;">
+                <div class="group-select">
+                    <select id="substitutionGroupSelect" onchange="loadSubstitutionsSchedule()">
+                        <option value="">-- Виберіть групу --</option>
+                    </select>
+                </div>
+
+                <div id="substitutionSchedule" class="days-cards" style="margin-bottom: 30px;"></div>
+
+                <h3 style="margin: 20px 0 10px; font-size: 18px; color: #1e293b;">Активні заміни</h3>
+                <div class="substitutions-list" id="substitutionsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНЕ ВІКНО ДЛЯ ДОДАВАННЯ/РЕДАГУВАННЯ ПАРИ -->
+    <div class="modal" id="pairModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Додати пару</h3>
+            </div>
+
+            <div class="day-pair-selector">
+                <select id="modalDay">
+                    <option value="1">Понеділок</option>
+                    <option value="2">Вівторок</option>
+                    <option value="3">Середа</option>
+                    <option value="4">Четвер</option>
+                    <option value="5">П'ятниця</option>
+                    <option value="6">Субота</option>
+                </select>
+                <select id="modalPair">
+                    <option value="1">1 пара</option>
+                    <option value="2">2 пара</option>
+                    <option value="3">3 пара</option>
+                    <option value="4">4 пара</option>
+                    <option value="5">5 пара</option>
+                </select>
+            </div>
+
+            <!-- ПОСТІЙНА ПАРА -->
+            <div class="pair-type-section">
+                <div class="pair-type-header">
+                    <input type="checkbox" id="useConstant" onchange="togglePairType('constant')">
+                    <label for="useConstant">Постійна пара (однакові предмети кожного тижня)</label>
+                </div>
+                <div class="pair-type-content" id="constantContent">
+                    <div id="constantKomplekty"></div>
+                    <button class="add-komplekt-btn" onclick="addKomplekt('constant')">+ Додати комплект (для підгруп)</button>
+                </div>
+            </div>
+
+            <!-- ЧЕРГУВАННЯ -->
+            <div class="pair-type-section">
+                <div class="pair-type-header">
+                    <input type="checkbox" id="useAlternation" onchange="togglePairType('alternation')">
+                    <label for="useAlternation">Чергування (різні предмети по тижнях)</label>
+                </div>
+                <div class="pair-type-content" id="alternationContent">
+                    <div class="block-container">
+                        <!-- ЧИСЕЛЬНИК -->
+                        <div class="week-block">
+                            <div class="week-title numerator-title">ЧИСЕЛЬНИК</div>
+                            <div id="numeratorKomplekty"></div>
+                            <button class="add-komplekt-btn" onclick="addKomplekt('numerator')">+ Додати комплект (підгрупи)</button>
+                        </div>
+                        <!-- ЗНАМЕННИК -->
+                        <div class="week-block">
+                            <div class="week-title denominator-title">ЗНАМЕННИК</div>
+                            <div id="denominatorKomplekty"></div>
+                            <button class="add-komplekt-btn" onclick="addKomplekt('denominator')">+ Додати комплект (підгрупи)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-save" onclick="savePair()">Зберегти</button>
+                <button class="btn-cancel" onclick="closeModal()">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let templates = [];
+        let currentGroup = null;
+        let currentEditDay = null;
+        let currentEditPair = null;
+
+        // Дані для модального вікна
+        let constantKomplekty = [{ template_id: '' }];
+        let numeratorKomplekty = [{ template_id: '' }];
+        let denominatorKomplekty = [{ template_id: '' }];
+
+        // Перевірка авторизації при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+        });
+
+        // ==================== АВТОРИЗАЦІЯ ====================
+        function checkAuth() {
+            fetch('/api/check-auth')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.authenticated) {
+                        document.getElementById('loginForm').style.display = 'none';
+                        document.getElementById('adminPanel').style.display = 'block';
+                        loadGroups();
+                        loadTemplates();
+                        loadGroupsForSelect();
+                    } else {
+                        document.getElementById('loginForm').style.display = 'block';
+                        document.getElementById('adminPanel').style.display = 'none';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('loginForm').style.display = 'block';
+                    document.getElementById('adminPanel').style.display = 'none';
+                });
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        checkAuth();
+                    } else {
+                        alert('Невірний логін або пароль');
+                    }
+                })
+                .catch(() => {
+                    alert('Помилка з\'єднання з сервером');
+                });
+        }
+
+        function logout() {
+            fetch('/api/logout', { method: 'POST' })
+                .then(() => {
+                    checkAuth();
+                });
+        }
+
+        // ==================== ВКЛАДКИ ====================
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content > div').forEach(d => d.style.display = 'none');
+
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').style.display = 'block';
+
+            if (tab === 'schedule') {
+                loadGroupsForSelect();
+            }
+            if (tab === 'substitutions') {
+                loadGroupsForSelect();
+            }
+        }
+
+        // ==================== ГРУПИ ====================
+        function loadGroups() {
+            fetch('/api/groups')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const list = document.getElementById('groupsList');
+                        list.innerHTML = data.data.map(g => `
+                            <div class="item">
+                                <div class="item-info">${g.name}</div>
+                                <div class="item-actions">
+                                    <button class="btn-delete" onclick="deleteGroup(${g.id})">Видалити</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                });
+        }
+
+        function addGroup() {
+            const name = document.getElementById('groupName').value;
+            if (!name) return alert('Введіть назву групи');
+
+            fetch('/api/groups', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('groupName').value = '';
+                        loadGroups();
+                        loadGroupsForSelect();
+                    } else {
+                        alert('Помилка: ' + data.error);
+                    }
+                });
+        }
+
+        function deleteGroup(id) {
+            if (!confirm('Видалити групу?')) return;
+
+            fetch('/api/groups/' + id, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadGroups();
+                        loadGroupsForSelect();
+                    }
+                });
+        }
+
+        // ==================== КОМПЛЕКТИ ====================
+        function loadTemplates() {
+            fetch('/api/templates')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        templates = data.data;
+                        const list = document.getElementById('templatesList');
+                        list.innerHTML = templates.map(t => `
+                            <div class="item">
+                                <div class="item-info">
+                                    <strong>${t.subject}</strong> | ${t.room} | ${t.teacher}
+                                </div>
+                                <div class="item-actions">
+                                    <button class="btn-delete" onclick="deleteTemplate(${t.id})">Видалити</button>
+                                </div>
+                            </div>
+                        `).join('');
+
+                        updateTemplateSelects();
+                    }
+                });
+        }
+
+        function addTemplate() {
+            const subject = document.getElementById('templateSubject').value;
+            const room = document.getElementById('templateRoom').value;
+            const teacher = document.getElementById('templateTeacher').value;
+
+            if (!subject || !room || !teacher) {
+                return alert('Заповніть всі поля');
+            }
+
+            fetch('/api/templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject, room, teacher })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('templateSubject').value = '';
+                        document.getElementById('templateRoom').value = '';
+                        document.getElementById('templateTeacher').value = '';
+                        loadTemplates();
+                    }
+                });
+        }
+
+        function deleteTemplate(id) {
+            if (!confirm('Видалити комплект?')) return;
+
+            fetch('/api/templates/' + id, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadTemplates();
+                    }
+                });
+        }
+
+        // ==================== РОЗКЛАД ====================
+        function loadGroupsForSelect() {
+            fetch('/api/groups')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const options = data.data.map(g =>
+                            `<option value="${g.id}">${g.name}</option>`
+                        ).join('');
+
+                        document.getElementById('scheduleGroupSelect').innerHTML =
+                            '<option value="">-- Виберіть групу --</option>' + options;
+
+                        document.getElementById('substitutionGroupSelect').innerHTML =
+                            '<option value="">-- Виберіть групу --</option>' + options;
+                    }
+                });
+        }
+
+        function updateTemplateSelects() {
+            const options = templates.map(t =>
+                `<option value="${t.id}">${t.subject} (${t.room}, ${t.teacher})</option>`
+            ).join('');
+
+            document.querySelectorAll('.template-select').forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">-- Виберіть комплект --</option>' + options;
+                if (currentValue) select.value = currentValue;
+            });
+        }
+
+        function loadSchedule() {
+            const groupId = document.getElementById('scheduleGroupSelect').value;
+            if (!groupId) return;
+
+            currentGroup = groupId;
+
+            fetch('/api/schedule/' + groupId)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        displayScheduleCards(data.data);
+                    }
+                });
+        }
+
+        function displayScheduleCards(schedule) {
+            const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+            const container = document.getElementById('daysCards');
+
+            let html = '';
+
+            for (let day = 1; day <= 6; day++) {
+                html += `<div class="day-card">`;
+                html += `<div class="day-header">${days[day - 1]}</div>`;
+                html += `<div class="pairs-list">`;
+
+                for (let pair = 1; pair <= 5; pair++) {
+                    const pairs = schedule.filter(s => s.day == day && s.pair == pair);
+
+                    html += `<div class="pair-card">`;
+                    html += `<div class="pair-number">Пара ${pair}`;
+                    html += `<div class="pair-actions" style="float: right;">`;
+                    html += `<button class="btn-edit-pair" onclick="openEditModal(${day}, ${pair})">✏️</button>`;
+                    if (pairs.length > 0) {
+                        html += `<button class="btn-delete-pair" onclick="deleteAllPairs(${day}, ${pair})">🗑️</button>`;
+                    }
+                    html += `</div>`;
+                    html += `</div>`;
+
+                    if (pairs.length > 0) {
+                        const numeratorItems = [];
+                        const denominatorItems = [];
+                        const bothItems = [];
+
+                        pairs.forEach(p => {
+                            const t = templates.find(tm => tm.id == p.template_id);
+                            if (t) {
+                                if (p.week_type === 'numerator') {
+                                    numeratorItems.push({
+                                        subject: t.subject,
+                                        room: t.room,
+                                        teacher: t.teacher
+                                    });
+                                } else if (p.week_type === 'denominator') {
+                                    denominatorItems.push({
+                                        subject: t.subject,
+                                        room: t.room,
+                                        teacher: t.teacher
+                                    });
+                                } else if (p.week_type === 'both') {
+                                    bothItems.push({
+                                        subject: t.subject,
+                                        room: t.room,
+                                        teacher: t.teacher
+                                    });
+                                }
+                            }
+                        });
+
+                        if (bothItems.length > 0) {
+                            const grouped = {};
+                            bothItems.forEach(item => {
+                                if (!grouped[item.subject]) {
+                                    grouped[item.subject] = [];
+                                }
+                                grouped[item.subject].push(item);
+                            });
+
+                            for (let subject in grouped) {
+                                const items = grouped[subject];
+                                html += `<div style="font-weight: bold; font-size: 14px; margin-top: 5px;">${subject}</div>`;
+                                items.forEach((item, index) => {
+                                    html += `<div style="margin-left: 10px; font-size: 13px;">${item.room}, ${item.teacher}`;
+                                    if (index < items.length - 1) {
+                                        html += ` / `;
+                                    }
+                                    html += `</div>`;
+                                });
+                            }
+                        }
+                        else if (numeratorItems.length > 0 || denominatorItems.length > 0) {
+                            html += `<div style="display: flex; gap: 15px; margin-top: 5px;">`;
+
+                            html += `<div style="flex: 1; background: #f0f8ff; padding: 8px; border-radius: 5px;">`;
+                            if (numeratorItems.length > 0) {
+                                html += `<div style="font-weight: bold; color: #007bff; margin-bottom: 5px; font-size: 12px;">ЧИСЕЛЬНИК</div>`;
+
+                                const numeratorGrouped = {};
+                                numeratorItems.forEach(item => {
+                                    if (!numeratorGrouped[item.subject]) {
+                                        numeratorGrouped[item.subject] = [];
+                                    }
+                                    numeratorGrouped[item.subject].push(item);
+                                });
+
+                                for (let subject in numeratorGrouped) {
+                                    const items = numeratorGrouped[subject];
+                                    html += `<div style="font-weight: 600; font-size: 13px; margin-top: 3px;">${subject}</div>`;
+                                    items.forEach(item => {
+                                        html += `<div style="margin-left: 8px; font-size: 12px;">${item.room}, ${item.teacher}</div>`;
+                                    });
+                                }
+                            }
+                            html += `</div>`;
+
+                            html += `<div style="flex: 1; background: #fff7e6; padding: 8px; border-radius: 5px;">`;
+                            if (denominatorItems.length > 0) {
+                                html += `<div style="font-weight: bold; color: #ff9800; margin-bottom: 5px; font-size: 12px;">ЗНАМЕННИК</div>`;
+
+                                const denominatorGrouped = {};
+                                denominatorItems.forEach(item => {
+                                    if (!denominatorGrouped[item.subject]) {
+                                        denominatorGrouped[item.subject] = [];
+                                    }
+                                    denominatorGrouped[item.subject].push(item);
+                                });
+
+                                for (let subject in denominatorGrouped) {
+                                    const items = denominatorGrouped[subject];
+                                    html += `<div style="font-weight: 600; font-size: 13px; margin-top: 3px;">${subject}</div>`;
+                                    items.forEach(item => {
+                                        html += `<div style="margin-left: 8px; font-size: 12px;">${item.room}, ${item.teacher}</div>`;
+                                    });
+                                }
+                            }
+                            html += `</div>`;
+
+                            html += `</div>`;
+                        }
+                    } else {
+                        html += `<div style="color: #999; text-align: center; padding: 10px; font-size: 13px;">Немає пари</div>`;
+                    }
+
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function openEditModal(day, pair) {
+            if (!currentGroup) return;
+
+            currentEditDay = day;
+            currentEditPair = pair;
+
+            document.getElementById('modalDay').value = day;
+            document.getElementById('modalPair').value = pair;
+            document.getElementById('modalTitle').textContent = 'Додати пару';
+
+            document.getElementById('useConstant').checked = false;
+            document.getElementById('useAlternation').checked = false;
+
+            document.getElementById('constantContent').classList.add('disabled');
+            document.getElementById('alternationContent').classList.add('disabled');
+
+            fetch('/api/schedule/' + currentGroup)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const existingPairs = data.data.filter(s => s.day == day && s.pair == pair);
+
+                        if (existingPairs.length > 0) {
+                            const hasNumerator = existingPairs.some(p => p.week_type === 'numerator');
+                            const hasDenominator = existingPairs.some(p => p.week_type === 'denominator');
+                            const hasBoth = existingPairs.some(p => p.week_type === 'both');
+
+                            if (hasBoth) {
+                                document.getElementById('useConstant').checked = true;
+                                constantKomplekty = existingPairs.map(p => ({
+                                    id: p.id,
+                                    template_id: p.template_id
+                                }));
+                                numeratorKomplekty = [{ template_id: '' }];
+                                denominatorKomplekty = [{ template_id: '' }];
+                                togglePairType('constant');
+                            } else if (hasNumerator || hasDenominator) {
+                                document.getElementById('useAlternation').checked = true;
+                                numeratorKomplekty = existingPairs.filter(p => p.week_type === 'numerator').map(p => ({
+                                    id: p.id,
+                                    template_id: p.template_id
+                                }));
+                                denominatorKomplekty = existingPairs.filter(p => p.week_type === 'denominator').map(p => ({
+                                    id: p.id,
+                                    template_id: p.template_id
+                                }));
+                                if (numeratorKomplekty.length === 0) numeratorKomplekty = [{ template_id: '' }];
+                                if (denominatorKomplekty.length === 0) denominatorKomplekty = [{ template_id: '' }];
+                                constantKomplekty = [{ template_id: '' }];
+                                togglePairType('alternation');
+                            }
+                        } else {
+                            document.getElementById('useConstant').checked = true;
+                            constantKomplekty = [{ template_id: '' }];
+                            numeratorKomplekty = [{ template_id: '' }];
+                            denominatorKomplekty = [{ template_id: '' }];
+                            togglePairType('constant');
+                        }
+
+                        renderKomplekty();
+                        document.getElementById('pairModal').style.display = 'flex';
+                    }
+                });
+        }
+
+        function togglePairType(type) {
+            const useConstant = document.getElementById('useConstant');
+            const useAlternation = document.getElementById('useAlternation');
+
+            if (type === 'constant') {
+                useConstant.checked = true;
+                useAlternation.checked = false;
+                document.getElementById('constantContent').classList.remove('disabled');
+                document.getElementById('alternationContent').classList.add('disabled');
+            } else {
+                useConstant.checked = false;
+                useAlternation.checked = true;
+                document.getElementById('constantContent').classList.add('disabled');
+                document.getElementById('alternationContent').classList.remove('disabled');
+            }
+
+            renderKomplekty();
+        }
+
+        function renderKomplekty() {
+            const options = templates.map(t =>
+                `<option value="${t.id}">${t.subject} (${t.room}, ${t.teacher})</option>`
+            ).join('');
+
+            const baseOptions = '<option value="">-- Виберіть комплект --</option>' + options;
+
+            let constantHtml = '';
+            constantKomplekty.forEach((k, index) => {
+                constantHtml += `
+                    <div class="komplekt-item">
+                        <div class="komplekt-header">
+                            <span>Комплект ${index + 1}${index > 0 ? ' (підгрупа)' : ''}</span>
+                            ${constantKomplekty.length > 1 ?
+                        `<button class="remove-komplekt" onclick="removeKomplekt('constant', ${index})">×</button>` :
+                        ''}
+                        </div>
+                        <select class="template-select" id="constant_${index}">
+                            ${baseOptions}
+                        </select>
+                    </div>
+                `;
+            });
+            document.getElementById('constantKomplekty').innerHTML = constantHtml;
+
+            let numeratorHtml = '';
+            numeratorKomplekty.forEach((k, index) => {
+                numeratorHtml += `
+                    <div class="komplekt-item">
+                        <div class="komplekt-header">
+                            <span>Комплект ${index + 1}${index > 0 ? ' (підгрупа)' : ''}</span>
+                            ${numeratorKomplekty.length > 1 ?
+                        `<button class="remove-komplekt" onclick="removeKomplekt('numerator', ${index})">×</button>` :
+                        ''}
+                        </div>
+                        <select class="template-select" id="numerator_${index}">
+                            ${baseOptions}
+                        </select>
+                    </div>
+                `;
+            });
+            document.getElementById('numeratorKomplekty').innerHTML = numeratorHtml;
+
+            let denominatorHtml = '';
+            denominatorKomplekty.forEach((k, index) => {
+                denominatorHtml += `
+                    <div class="komplekt-item">
+                        <div class="komplekt-header">
+                            <span>Комплект ${index + 1}${index > 0 ? ' (підгрупа)' : ''}</span>
+                            ${denominatorKomplekty.length > 1 ?
+                        `<button class="remove-komplekt" onclick="removeKomplekt('denominator', ${index})">×</button>` :
+                        ''}
+                        </div>
+                        <select class="template-select" id="denominator_${index}">
+                            ${baseOptions}
+                        </select>
+                    </div>
+                `;
+            });
+            document.getElementById('denominatorKomplekty').innerHTML = denominatorHtml;
+
+            setTimeout(() => {
+                constantKomplekty.forEach((k, index) => {
+                    const select = document.getElementById(`constant_${index}`);
+                    if (select && k.template_id) select.value = k.template_id;
+                });
+                numeratorKomplekty.forEach((k, index) => {
+                    const select = document.getElementById(`numerator_${index}`);
+                    if (select && k.template_id) select.value = k.template_id;
+                });
+                denominatorKomplekty.forEach((k, index) => {
+                    const select = document.getElementById(`denominator_${index}`);
+                    if (select && k.template_id) select.value = k.template_id;
+                });
+            }, 100);
+        }
+
+        function addKomplekt(type) {
+            if (type === 'constant') {
+                constantKomplekty.push({ template_id: '' });
+            } else if (type === 'numerator') {
+                numeratorKomplekty.push({ template_id: '' });
+            } else if (type === 'denominator') {
+                denominatorKomplekty.push({ template_id: '' });
+            }
+            renderKomplekty();
+        }
+
+        function removeKomplekt(type, index) {
+            if (type === 'constant') {
+                if (constantKomplekty[index].id) {
+                    fetch('/api/schedule/' + constantKomplekty[index].id, { method: 'DELETE' });
+                }
+                constantKomplekty.splice(index, 1);
+            } else if (type === 'numerator') {
+                if (numeratorKomplekty[index].id) {
+                    fetch('/api/schedule/' + numeratorKomplekty[index].id, { method: 'DELETE' });
+                }
+                numeratorKomplekty.splice(index, 1);
+            } else if (type === 'denominator') {
+                if (denominatorKomplekty[index].id) {
+                    fetch('/api/schedule/' + denominatorKomplekty[index].id, { method: 'DELETE' });
+                }
+                denominatorKomplekty.splice(index, 1);
+            }
+            renderKomplekty();
+        }
+
+        function savePair() {
+            const useConstant = document.getElementById('useConstant').checked;
+            const useAlternation = document.getElementById('useAlternation').checked;
+            const isSubstitution = document.getElementById('modalTitle').textContent === 'Додати заміну';
+
+            if (!useConstant && !useAlternation) {
+                alert('Виберіть тип пари: Постійна або Чергування');
+                return;
+            }
+
+            const day = document.getElementById('modalDay').value;
+            const pair = document.getElementById('modalPair').value;
+            const promises = [];
+
+            if (isSubstitution) {
+                // Отримуємо вибраний день (1-6)
+                const selectedDay = parseInt(document.getElementById('modalDay').value);
+
+                // Створюємо дату для вибраного дня
+                const today = new Date();
+                const currentDayOfWeek = today.getDay(); // 0 = неділя, 1 = понеділок, ...
+
+                // Конвертуємо наш день (1=понеділок) в день тижня JavaScript (1=понеділок)
+                let targetDayOfWeek = selectedDay;
+
+                // В JavaScript: 0 = неділя, 1 = понеділок, 2 = вівторок, 3 = середа, 4 = четвер, 5 = п'ятниця, 6 = субота
+                // Наш формат: 1 = понеділок, 2 = вівторок, 3 = середа, 4 = четвер, 5 = п'ятниця, 6 = субота
+
+                // Знаходимо наступний вибраний день
+                const targetDate = new Date(today);
+                let daysToAdd = targetDayOfWeek - currentDayOfWeek;
+                if (daysToAdd < 0) daysToAdd += 7;
+                if (daysToAdd === 0 && today.getHours() >= 15) daysToAdd = 7; // Якщо сьогодні і після 15:00, то на наступний тиждень
+
+                targetDate.setDate(today.getDate() + daysToAdd);
+
+                // Встановлюємо час на 12:00, щоб уникнути проблем з часовими поясами
+                targetDate.setHours(12, 0, 0, 0);
+
+                const targetDateStr = targetDate.toISOString().split('T')[0];
+                console.log('Додаємо заміну на:', targetDateStr, 'день:', selectedDay, 'daysToAdd:', daysToAdd);
+
+                if (useConstant) {
+                    constantKomplekty.forEach((k, index) => {
+                        const select = document.getElementById(`constant_${index}`);
+                        if (select && select.value) {
+                            promises.push(
+                                fetch('/api/substitutions', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        group_id: parseInt(currentGroup),
+                                        date: targetDateStr,
+                                        pair: parseInt(pair),
+                                        template_id: parseInt(select.value)
+                                    })
+                                })
+                            );
+                        }
+                    });
+                } else {
+                    numeratorKomplekty.forEach((k, index) => {
+                        const select = document.getElementById(`numerator_${index}`);
+                        if (select && select.value) {
+                            promises.push(
+                                fetch('/api/substitutions', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        group_id: parseInt(currentGroup),
+                                        date: targetDateStr,
+                                        pair: parseInt(pair),
+                                        template_id: parseInt(select.value)
+                                    })
+                                })
+                            );
+                        }
+                    });
+
+                    denominatorKomplekty.forEach((k, index) => {
+                        const select = document.getElementById(`denominator_${index}`);
+                        if (select && select.value) {
+                            promises.push(
+                                fetch('/api/substitutions', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        group_id: parseInt(currentGroup),
+                                        date: targetDateStr,
+                                        pair: parseInt(pair),
+                                        template_id: parseInt(select.value)
+                                    })
+                                })
+                            );
+                        }
+                    });
+                }
+
+                if (promises.length === 0) {
+                    alert('Додайте хоча б один комплект');
+                    return;
+                }
+
+                Promise.all(promises)
+                    .then(responses => Promise.all(responses.map(r => r.json())))
+                    .then(() => {
+                        closeModal();
+                        if (document.getElementById('substitutionsTab').style.display === 'block') {
+                            loadSubstitutionsSchedule();
+                        }
+                        alert('Заміну додано на ' + targetDateStr);
+                    })
+                    .catch(error => {
+                        console.error('Помилка додавання заміни:', error);
+                        alert('Помилка при додаванні заміни');
+                    });
+            } else {
+                fetch('/api/schedule/delete-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        group_id: currentGroup,
+                        day: day,
+                        pair: pair
+                    })
+                }).then(() => {
+                    if (useConstant) {
+                        constantKomplekty.forEach((k, index) => {
+                            const select = document.getElementById(`constant_${index}`);
+                            if (select && select.value) {
+                                promises.push(
+                                    fetch('/api/schedule', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            group_id: parseInt(currentGroup),
+                                            day: parseInt(day),
+                                            pair: parseInt(pair),
+                                            template_id: parseInt(select.value),
+                                            week_type: 'both'
+                                        })
+                                    })
+                                );
+                            }
+                        });
+                    } else {
+                        numeratorKomplekty.forEach((k, index) => {
+                            const select = document.getElementById(`numerator_${index}`);
+                            if (select && select.value) {
+                                promises.push(
+                                    fetch('/api/schedule', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            group_id: parseInt(currentGroup),
+                                            day: parseInt(day),
+                                            pair: parseInt(pair),
+                                            template_id: parseInt(select.value),
+                                            week_type: 'numerator'
+                                        })
+                                    })
+                                );
+                            }
+                        });
+
+                        denominatorKomplekty.forEach((k, index) => {
+                            const select = document.getElementById(`denominator_${index}`);
+                            if (select && select.value) {
+                                promises.push(
+                                    fetch('/api/schedule', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            group_id: parseInt(currentGroup),
+                                            day: parseInt(day),
+                                            pair: parseInt(pair),
+                                            template_id: parseInt(select.value),
+                                            week_type: 'denominator'
+                                        })
+                                    })
+                                );
+                            }
+                        });
+                    }
+
+                    if (promises.length === 0) {
+                        alert('Додайте хоча б один комплект');
+                        return;
+                    }
+
+                    Promise.all(promises)
+                        .then(() => {
+                            closeModal();
+                            loadSchedule();
+                        })
+                        .catch(error => {
+                            console.error('Помилка збереження:', error);
+                            alert('Помилка при збереженні');
+                        });
+                });
+            }
+        }
+
+        function deleteAllPairs(day, pair) {
+            if (!confirm('Видалити всі комплекти з цієї пари?')) return;
+
+            fetch('/api/schedule/delete-all', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    group_id: currentGroup,
+                    day: day,
+                    pair: pair
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadSchedule();
+                    }
+                });
+        }
+
+        function closeModal() {
+            document.getElementById('pairModal').style.display = 'none';
+        }
+
+        // ==================== ЗАМІНИ ====================
+        function loadSubstitutionsSchedule() {
+            const groupId = document.getElementById('substitutionGroupSelect').value;
+            if (!groupId) return;
+
+            currentGroup = groupId;
+
+            // Спочатку завантажуємо розклад
+            fetch('/api/schedule/' + groupId)
+                .then(res => res.json())
+                .then(scheduleData => {
+                    if (scheduleData.success) {
+                        // Потім завантажуємо заміни
+                        return fetch('/api/substitutions/' + groupId)
+                            .then(res => res.json())
+                            .then(subData => {
+                                console.log('Завантажені заміни:', subData); // Для перевірки
+
+                                // Відображаємо розклад з замінами
+                                displaySubstitutionSchedule(
+                                    scheduleData.data,
+                                    subData.success ? subData.data : []
+                                );
+
+                                // Відображаємо список активних замін
+                                displaySubstitutionsList(subData.success ? subData.data : []);
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Помилка завантаження:', error);
+                });
+        }
+
+        function displaySubstitutionSchedule(schedule, substitutions) {
+            const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+            const container = document.getElementById('substitutionSchedule');
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            // Фільтруємо активні заміни
+            const activeSubstitutions = substitutions.filter(s => {
+                let subDate;
+                if (s.date.includes('T')) {
+                    subDate = new Date(s.date);
+                } else {
+                    subDate = new Date(s.date + 'T12:00:00');
+                }
+
+                if (subDate > today) return true;
+                if (subDate.toDateString() === today.toDateString()) {
+                    const currentHour = now.getHours();
+                    const currentMinutes = now.getMinutes();
+                    if (currentHour < 15) return true;
+                    if (currentHour === 15 && currentMinutes === 0) return true;
+                }
+                return false;
+            });
+
+            // Групуємо заміни по днях і парах
+            const substitutionsMap = {};
+            activeSubstitutions.forEach(s => {
+                let subDate;
+                if (s.date.includes('T')) {
+                    subDate = new Date(s.date);
+                } else {
+                    subDate = new Date(s.date + 'T12:00:00');
+                }
+
+                let dayOfWeek = subDate.getDay();
+                if (dayOfWeek === 0) dayOfWeek = 7;
+                console.log(`Дата: ${s.date}, локальний день: ${dayOfWeek}, день тижня: ${days[dayOfWeek - 1]}`);
+                if (dayOfWeek >= 1 && dayOfWeek <= 6) {
+                    const key = `${dayOfWeek}_${s.pair}`;
+                    if (!substitutionsMap[key]) {
+                        substitutionsMap[key] = [];
+                    }
+                    const t = templates.find(tm => tm.id == s.template_id);
+                    if (t) {
+                        substitutionsMap[key].push({
+                            subject: t.subject,
+                            room: t.room,
+                            teacher: t.teacher
+                        });
+                    }
+                }
+            });
+
+            console.log('Substitutions by day/pair:', substitutionsMap);
+
+            let html = '';
+
+            for (let day = 1; day <= 6; day++) {
+                html += `<div class="day-card">`;
+                html += `<div class="day-header">${days[day - 1]}</div>`;
+                html += `<div class="pairs-list">`;
+
+                for (let pair = 1; pair <= 5; pair++) {
+                    const pairs = schedule.filter(s => s.day == day && s.pair == pair);
+                    const key = `${day}_${pair}`;
+                    const hasSubstitution = substitutionsMap[key] && substitutionsMap[key].length > 0;
+                    const substitutionItems = hasSubstitution ? substitutionsMap[key] : [];
+
+                    html += `<div class="pair-card ${hasSubstitution ? 'substitution-active' : ''}">`;
+                    html += `<div class="pair-number">Пара ${pair}`;
+                    html += `<div class="pair-actions" style="float: right;">`;
+                    if (!hasSubstitution) {
+                        html += `<button class="btn-substitution" onclick="openSubstitutionModal(${day}, ${pair})">+ Заміна</button>`;
+                    } else {
+                        html += `<span style="color: #dc3545; font-size: 12px; margin-right: 10px;">✓ Заміна є</span>`;
+                    }
+                    html += `</div>`;
+                    html += `</div>`;
+
+                    if (hasSubstitution) {
+                        // Показуємо заміну
+                        const items = substitutionItems;
+
+                        // Групуємо за предметами
+                        const grouped = {};
+                        items.forEach(item => {
+                            if (!grouped[item.subject]) {
+                                grouped[item.subject] = [];
+                            }
+                            grouped[item.subject].push(item);
+                        });
+
+                        // Якщо є два різних предмети - показуємо як чергування
+                        if (Object.keys(grouped).length === 2) {
+                            const subjects = Object.keys(grouped);
+
+                            html += `<div style="display: flex; gap: 15px; margin-top: 5px;">`;
+
+                            // Перший предмет - Чисельник
+                            html += `<div style="flex: 1;">`;
+                            html += `<div style="font-weight: bold; color: #007bff; margin-bottom: 5px; font-size: 12px;">ЧИСЕЛЬНИК</div>`;
+
+                            const firstSubject = subjects[0];
+                            const firstItems = grouped[firstSubject];
+                            html += `<div style="font-weight: 600; font-size: 13px; margin-top: 3px;">${firstSubject}</div>`;
+                            html += `<div style="margin-left: 8px; font-size: 12px;">`;
+                            firstItems.forEach((item, index) => {
+                                html += `${item.room}, ${item.teacher}`;
+                                if (index < firstItems.length - 1) {
+                                    html += ` / `;
+                                }
+                            });
+                            html += `</div>`;
+                            html += `</div>`;
+
+                            // Другий предмет - Знаменник
+                            html += `<div style="flex: 1;">`;
+                            html += `<div style="font-weight: bold; color: #ff9800; margin-bottom: 5px; font-size: 12px;">ЗНАМЕННИК</div>`;
+
+                            const secondSubject = subjects[1];
+                            const secondItems = grouped[secondSubject];
+                            html += `<div style="font-weight: 600; font-size: 13px; margin-top: 3px;">${secondSubject}</div>`;
+                            html += `<div style="margin-left: 8px; font-size: 12px;">`;
+                            secondItems.forEach((item, index) => {
+                                html += `${item.room}, ${item.teacher}`;
+                                if (index < secondItems.length - 1) {
+                                    html += ` / `;
+                                }
+                            });
+                            html += `</div>`;
+                            html += `</div>`;
+
+                            html += `</div>`;
+                        } else {
+                            // Постійна пара - один предмет
+                            for (let subject in grouped) {
+                                const items = grouped[subject];
+                                html += `<div style="font-weight: bold; font-size: 14px; margin-top: 5px;">${subject}</div>`;
+                                html += `<div style="margin-left: 10px; font-size: 13px;">`;
+                                items.forEach((item, index) => {
+                                    html += `${item.room}, ${item.teacher}`;
+                                    if (index < items.length - 1) {
+                                        html += ` / `;
+                                    }
+                                });
+                                html += `</div>`;
+                            }
+                        }
+                    } else if (pairs.length > 0) {
+                        // Показуємо звичайний розклад
+                        const numeratorItems = [];
+                        const denominatorItems = [];
+                        const bothItems = [];
+
+                        pairs.forEach(p => {
+                            const t = templates.find(tm => tm.id == p.template_id);
+                            if (t) {
+                                const item = {
+                                    subject: t.subject,
+                                    room: t.room,
+                                    teacher: t.teacher
+                                };
+
+                                if (p.week_type === 'numerator') {
+                                    numeratorItems.push(item);
+                                } else if (p.week_type === 'denominator') {
+                                    denominatorItems.push(item);
+                                } else if (p.week_type === 'both') {
+                                    bothItems.push(item);
+                                }
+                            }
+                        });
+
+                        // Якщо є bothItems - це постійна пара
+                        if (bothItems.length > 0) {
+                            const grouped = {};
+                            bothItems.forEach(item => {
+                                if (!grouped[item.subject]) {
+                                    grouped[item.subject] = [];
+                                }
+                                grouped[item.subject].push(item);
+                            });
+
+                            for (let subject in grouped) {
+                                const items = grouped[subject];
+                                html += `<div style="font-weight: bold; font-size: 14px; margin-top: 5px;">${subject}</div>`;
+                                html += `<div style="margin-left: 10px; font-size: 13px;">`;
+                                items.forEach((item, index) => {
+                                    html += `${item.room}, ${item.teacher}`;
+                                    if (index < items.length - 1) {
+                                        html += ` / `;
+                                    }
+                                });
+                                html += `</div>`;
+                            }
+                        }
+                        // Якщо є чергування
+                        else if (numeratorItems.length > 0 || denominatorItems.length > 0) {
+                            html += `<div style="display: flex; gap: 15px; margin-top: 5px;">`;
+
+                            // Чисельник
+                            html += `<div style="flex: 1;">`;
+                            if (numeratorItems.length > 0) {
+                                html += `<div style="font-weight: bold; color: #007bff; margin-bottom: 5px; font-size: 12px;">ЧИСЕЛЬНИК</div>`;
+
+                                const grouped = {};
+                                numeratorItems.forEach(item => {
+                                    if (!grouped[item.subject]) {
+                                        grouped[item.subject] = [];
+                                    }
+                                    grouped[item.subject].push(item);
+                                });
+
+                                for (let subject in grouped) {
+                                    const items = grouped[subject];
+                                    html += `<div style="font-weight: 600; font-size: 13px; margin-top: 3px;">${subject}</div>`;
+                                    html += `<div style="margin-left: 8px; font-size: 12px;">`;
+                                    items.forEach((item, index) => {
+                                        html += `${item.room}, ${item.teacher}`;
+                                        if (index < items.length - 1) {
+                                            html += ` / `;
+                                        }
+                                    });
+                                    html += `</div>`;
+                                }
+                            }
+                            html += `</div>`;
+
+                            // Знаменник
+                            html += `<div style="flex: 1;">`;
+                            if (denominatorItems.length > 0) {
+                                html += `<div style="font-weight: bold; color: #ff9800; margin-bottom: 5px; font-size: 12px;">ЗНАМЕННИК</div>`;
+
+                                const grouped = {};
+                                denominatorItems.forEach(item => {
+                                    if (!grouped[item.subject]) {
+                                        grouped[item.subject] = [];
+                                    }
+                                    grouped[item.subject].push(item);
+                                });
+
+                                for (let subject in grouped) {
+                                    const items = grouped[subject];
+                                    html += `<div style="font-weight: 600; font-size: 13px; margin-top: 3px;">${subject}</div>`;
+                                    html += `<div style="margin-left: 8px; font-size: 12px;">`;
+                                    items.forEach((item, index) => {
+                                        html += `${item.room}, ${item.teacher}`;
+                                        if (index < items.length - 1) {
+                                            html += ` / `;
+                                        }
+                                    });
+                                    html += `</div>`;
+                                }
+                            }
+                            html += `</div>`;
+
+                            html += `</div>`;
+                        }
+                    } else {
+                        html += `<div style="color: #999; text-align: center; padding: 10px; font-size: 13px;">Немає пари</div>`;
+                    }
+
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function openSubstitutionModal(day, pair) {
+            if (!currentGroup) return;
+
+            currentEditDay = day;
+            currentEditPair = pair;
+
+            document.getElementById('modalDay').value = day;
+            document.getElementById('modalPair').value = pair;
+            document.getElementById('modalTitle').textContent = 'Додати заміну';
+
+            // Логування для перевірки
+            console.log('Відкрито модальне вікно для дня:', day, 'пари:', pair);
+
+            document.getElementById('useConstant').checked = false;
+            document.getElementById('useAlternation').checked = false;
+
+            document.getElementById('constantContent').classList.add('disabled');
+            document.getElementById('alternationContent').classList.add('disabled');
+
+            document.getElementById('useConstant').checked = true;
+            constantKomplekty = [{ template_id: '' }];
+            numeratorKomplekty = [{ template_id: '' }];
+            denominatorKomplekty = [{ template_id: '' }];
+            togglePairType('constant');
+
+            renderKomplekty();
+            document.getElementById('pairModal').style.display = 'flex';
+        }
+
+        function loadSubstitutionsList() {
+            const groupId = document.getElementById('substitutionGroupSelect').value;
+            if (!groupId) return;
+
+            fetch('/api/substitutions/' + groupId)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        displaySubstitutionsList(data.data);
+                    }
+                });
+        }
+
+        function displaySubstitutionsList(substitutions) {
+            const list = document.getElementById('substitutionsList');
+
+            console.log('Всі заміни з БД:', substitutions);
+
+            if (!substitutions || substitutions.length === 0) {
+                list.innerHTML = '<div class="item">Немає активних замін</div>';
+                return;
+            }
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+
+            // Фільтруємо активні заміни
+            const activeSubstitutions = substitutions.filter(s => {
+                let subDate;
+                if (s.date.includes('T')) {
+                    subDate = new Date(s.date);
+                } else {
+                    subDate = new Date(s.date + 'T12:00:00');
+                }
+
+                if (subDate > today) return true;
+                if (subDate.toDateString() === today.toDateString()) {
+                    if (currentHour < 15) return true;
+                    if (currentHour === 15 && currentMinutes === 0) return true;
+                }
+                return false;
+            });
+
+            console.log('Активні заміни після фільтрації:', activeSubstitutions);
+
+            if (activeSubstitutions.length === 0) {
+                list.innerHTML = '<div class="item">Немає активних замін</div>';
+                return;
+            }
+
+            // Групуємо заміни по датах і парах
+            const groupedByDate = {};
+
+            activeSubstitutions.forEach(s => {
+                let subDate;
+                let dateStr;
+                if (s.date.includes('T')) {
+                    subDate = new Date(s.date);
+                    dateStr = s.date.split('T')[0];
+                } else {
+                    subDate = new Date(s.date + 'T12:00:00');
+                    dateStr = s.date;
+                }
+
+                const key = `${dateStr}_${s.pair}`;
+                if (!groupedByDate[key]) {
+                    groupedByDate[key] = {
+                        date: subDate,
+                        dateStr: dateStr,
+                        pair: s.pair,
+                        items: []
+                    };
+                }
+
+                const t = templates.find(tm => tm.id == s.template_id);
+                if (t) {
+                    groupedByDate[key].items.push({
+                        subject: t.subject,
+                        room: t.room,
+                        teacher: t.teacher
+                    });
+                }
+            });
+
+            // Конвертуємо в масив і сортуємо
+            const groupedArray = Object.values(groupedByDate).sort((a, b) => {
+                if (a.dateStr !== b.dateStr) return a.dateStr.localeCompare(b.dateStr);
+                return a.pair - b.pair;
+            });
+
+            list.innerHTML = groupedArray.map(group => {
+                const subDate = group.date;
+                const dateStr = group.dateStr;
+                const pair = group.pair;
+                const items = group.items;
+
+                const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+                const dayName = days[subDate.getDay()];
+
+                let displayText = '';
+                const todayStr = today.toISOString().split('T')[0];
+
+                if (dateStr === todayStr) {
+                    const minutesLeft = (15 * 60) - (currentHour * 60 + currentMinutes);
+                    if (minutesLeft > 0) {
+                        const hours = Math.floor(minutesLeft / 60);
+                        const mins = minutesLeft % 60;
+                        if (hours > 0) {
+                            displayText = `Сьогодні (ще ${hours} год ${mins} хв)`;
+                        } else {
+                            displayText = `Сьогодні (ще ${mins} хв)`;
+                        }
+                    } else {
+                        displayText = 'Сьогодні';
+                    }
+                } else {
+                    displayText = `${dayName}, ${dateStr}`;
+                }
+
+                // Групуємо предмети для красивого виводу
+                const groupedSubjects = {};
+                items.forEach(item => {
+                    if (!groupedSubjects[item.subject]) {
+                        groupedSubjects[item.subject] = [];
+                    }
+                    groupedSubjects[item.subject].push(item);
+                });
+
+                let itemsHtml = '';
+                for (let subject in groupedSubjects) {
+                    const subjectItems = groupedSubjects[subject];
+                    itemsHtml += `<div style="font-weight: bold; margin-top: 5px;">${subject}</div>`;
+                    subjectItems.forEach((item, index) => {
+                        itemsHtml += `<div style="margin-left: 10px;">${item.room}, ${item.teacher}`;
+                        if (index < subjectItems.length - 1) {
+                            itemsHtml += ` / `;
+                        }
+                        itemsHtml += `</div>`;
+                    });
+                }
+
+                return `
+            <div class="substitution-item">
+                <div style="flex: 1;">
+                    <strong>${displayText} - Пара ${pair}</strong>
+                    ${itemsHtml}
+                </div>
+                <button class="btn-delete" onclick="deleteSubstitutionForGroup('${dateStr}', ${pair})">Видалити всі</button>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Нова функція для видалення всіх замін на конкретну дату і пару
+        function deleteSubstitutionForGroup(dateStr, pair) {
+            if (!confirm(`Видалити всі заміни на ${dateStr} пара ${pair}?`)) return;
+
+            const groupId = document.getElementById('substitutionGroupSelect').value;
+
+            fetch('/api/substitutions/' + groupId)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const toDelete = data.data.filter(s => {
+                            let subDate;
+                            if (s.date.includes('T')) {
+                                subDate = s.date.split('T')[0];
+                            } else {
+                                subDate = s.date;
+                            }
+                            return subDate === dateStr && s.pair == pair;
+                        });
+
+                        const deletePromises = toDelete.map(s =>
+                            fetch('/api/substitutions/' + s.id, { method: 'DELETE' })
+                        );
+
+                        Promise.all(deletePromises)
+                            .then(() => {
+                                loadSubstitutionsSchedule();
+                            });
+                    }
+                });
+        }
+
+        function deleteSubstitution(id) {
+            if (!confirm('Видалити заміну?')) return;
+
+            fetch('/api/substitutions/' + id, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadSubstitutionsSchedule();
+                    }
+                });
+        }
+
+
+    </script>
+</body>
+
+</html>
