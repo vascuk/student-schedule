@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нововолинський електромеханічний фаховий коледж - Розклад</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Головний контент */
+        .main-content {
+            flex: 1 0 auto;
+            width: 100%;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Шапка */
+        .college-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 20px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .college-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            max-width: 800px;
+            margin: 0 auto 5px;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+
+        .college-header h1 span {
+            color: #38bdf8;
+        }
+
+        .college-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Заголовок розділу */
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1e293b;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+        }
+
+        /* Сітка груп */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .group-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 16px 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            text-align: center;
+            letter-spacing: 0.3px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .group-btn:hover {
+            background: #f8fafc;
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Сторінка розкладу */
+        .schedule-page {
+            display: none;
+        }
+
+        .schedule-header {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .back-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .group-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0f172a;
+            flex: 1;
+        }
+
+        .share-btn {
+            background: #38bdf8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn:hover {
+            background: #0ea5e9;
+        }
+
+        /* Картки днів */
+        .days-cards {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-header {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pairs-list {
+            padding: 12px;
+        }
+
+        .pair-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .pair-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .pair-card.substitution-active {
+            background: #fff1f0;
+            border-color: #f87171;
+        }
+
+        .pair-number {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .substitution-active .pair-number {
+            color: #b91c1c;
+        }
+
+        .substitution-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .pair-subject {
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .pair-details {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* Стилі для замін */
+        .substitution-item {
+            background: #fff1f0;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 6px;
+            border: 1px solid #fecaca;
+        }
+
+        .substitution-subject {
+            font-weight: 600;
+            color: #b91c1c;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .alternating-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .alternating-block {
+            flex: 1;
+            min-width: 0;
+            /* Важливо для запобігання переповненню */
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .numerator-block {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+        }
+
+        .denominator-block {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+        }
+
+        .block-title {
+            font-weight: 600;
+            font-size: 11px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .numerator-title {
+            color: #0369a1;
+        }
+
+        .denominator-title {
+            color: #9a3412;
+        }
+
+        .block-subject {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .block-details {
+            font-size: 11px;
+            color: #475569;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .no-pair {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 12px;
+            padding: 12px;
+            text-align: center;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        /* Адаптивність */
+        @media (max-width: 1200px) {
+            .days-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .alternating-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .college-header h1 {
+                font-size: 24px;
+            }
+
+            .days-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .schedule-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .group-title {
+                font-size: 18px;
+            }
+
+            .groups-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .days-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .groups-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Футер */
+        .footer {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #334155;
+            width: 100%;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 5px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .footer-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-bottom: 4px;
+            border-bottom: 1px solid transparent;
+        }
+
+        .footer-link:hover {
+            color: #7dd3fc;
+            border-bottom-color: #38bdf8;
+        }
+
+        .footer-developer {
+            font-size: 11px;
+            opacity: 0.7;
+            font-weight: 300;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .footer-developer span {
+            color: #38bdf8;
+            font-weight: 500;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="main-content">
+        <div class="college-header">
+            <h1>Нововолинський <span>електромеханічний</span> фаховий коледж</h1>
+            <p>Розклад занять</p>
+        </div>
+
+        <!-- Головна сторінка -->
+        <div class="container" id="mainPage">
+            <div class="section-title">
+                <h2>Виберіть групу</h2>
+            </div>
+            <div class="groups-grid" id="groupsContainer"></div>
+        </div>
+
+        <!-- Сторінка розкладу -->
+        <div class="container schedule-page" id="schedulePage">
+            <div class="schedule-header">
+                <button class="back-btn" onclick="backToMain()">
+                    ← На головну
+                </button>
+                <h2 class="group-title" id="groupTitle"></h2>
+                <button class="share-btn" onclick="copyShareLink()">
+                    🔗 Поділитися
+                </button>
+            </div>
+
+            <div id="daysCards" class="days-cards"></div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                Розклад створено за підтримки студентського самоврядування
+            </p>
+
+            <a href="https://nemk.com.ua" target="_blank" class="footer-link">
+                Нововолинський електромеханічний фаховий коледж
+            </a>
+
+            <p class="footer-developer">
+                Розробник: <span>Ващук Роман</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        let currentGroup = null;
+        let templates = [];
+        let allSchedule = [];
+        let allSubstitutions = [];
+
+
+
+        function loadGroups() {
+            fetch('/api/groups')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const container = document.getElementById('groupsContainer');
+                        container.innerHTML = data.data.map(g =>
+                            `<button class="group-btn" onclick="selectGroup(${g.id}, '${g.name}')">${g.name}</button>`
+                        ).join('');
+
+                        // Якщо є groupId в URL і ми ще не завантажили групу
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const groupId = urlParams.get('group');
+                        if (groupId && !currentGroup) {
+                            const group = data.data.find(g => g.id == groupId);
+                            if (group) {
+                                selectGroup(group.id, group.name);
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Помилка завантаження груп:', error);
+                });
+        }
+
+        function loadTemplates() {
+            fetch('/api/templates')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        templates = data.data;
+                    }
+                });
+        }
+
+
+
+        // Додайте цю функцію для відновлення при завантаженні сторінки
+        function restoreFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const groupId = urlParams.get('group');
+
+            if (groupId) {
+                currentGroup = parseInt(groupId);
+
+                // Спроба відновити назву з sessionStorage
+                const savedName = sessionStorage.getItem('groupName_' + groupId);
+                if (savedName) {
+                    document.getElementById('groupTitle').textContent = savedName;
+                    document.getElementById('mainPage').style.display = 'none';
+                    document.getElementById('schedulePage').style.display = 'block';
+                    loadSchedule();
+                    loadSubstitutions();
+                } else {
+                    // Якщо немає в sessionStorage, завантажуємо з сервера
+                    fetch('/api/groups/' + groupId)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById('groupTitle').textContent = data.data.name;
+                                sessionStorage.setItem('groupName_' + groupId, data.data.name);
+                                document.getElementById('mainPage').style.display = 'none';
+                                document.getElementById('schedulePage').style.display = 'block';
+                                loadSchedule();
+                                loadSubstitutions();
+                            }
+                        });
+                }
+            }
+        }
+
+        // Оновіть DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function () {
+            loadGroups();
+            loadTemplates();
+            restoreFromUrl(); // Додайте цей виклик
+        });
+        // Оновіть DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function () {
+            loadGroups();
+            loadTemplates();
+
+            // Перевіряємо URL відразу після завантаження
+            const urlParams = new URLSearchParams(window.location.search);
+            const groupId = urlParams.get('group');
+
+            if (groupId) {
+                // Чекаємо поки завантажаться групи
+                const checkGroups = setInterval(() => {
+                    const groupsContainer = document.getElementById('groupsContainer');
+                    if (groupsContainer && groupsContainer.children.length > 0) {
+                        clearInterval(checkGroups);
+                        // Знаходимо групу в списку
+                        const groups = Array.from(groupsContainer.children);
+                        const groupButton = groups.find(btn => btn.getAttribute('onclick')?.includes(`selectGroup(${groupId}`));
+
+                        if (groupButton) {
+                            // Отримуємо назву групи з кнопки
+                            const groupName = groupButton.textContent;
+                            selectGroup(parseInt(groupId), groupName);
+                        } else {
+                            // Якщо група не знайдена в списку, завантажуємо з сервера
+                            fetch('/api/groups/' + groupId)
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        selectGroup(parseInt(groupId), data.data.name);
+                                    }
+                                });
+                        }
+                    }
+                }, 100);
+            }
+        });
+
+// Коли вибираєш групу
+function selectGroup(groupId, groupName) {
+    currentGroup = groupId;
+    
+    // Оновлюємо URL
+    const url = new URL(window.location);
+    url.searchParams.set('group', groupId);
+    window.history.pushState({}, '', url);
+    
+    // Зберігаємо в localStorage
+    localStorage.setItem('lastGroupId', groupId);
+    localStorage.setItem('lastGroupName', groupName);
+    
+    document.getElementById('groupTitle').textContent = groupName;
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('schedulePage').style.display = 'block';
+    
+    loadSchedule();
+    loadSubstitutions();
+}
+
+// При завантаженні
+document.addEventListener('DOMContentLoaded', function() {
+    loadGroups();
+    loadTemplates();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupId = urlParams.get('group');
+    
+    if (groupId) {
+        // Якщо є в URL — використовуємо його
+        fetch('/api/groups/' + groupId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    selectGroup(parseInt(groupId), data.data.name);
+                }
+            });
+    } else {
+        // Якщо немає в URL — перевіряємо localStorage
+        const lastGroupId = localStorage.getItem('lastGroupId');
+        const lastGroupName = localStorage.getItem('lastGroupName');
+        
+        if (lastGroupId && lastGroupName) {
+            selectGroup(parseInt(lastGroupId), lastGroupName);
+        }
+    }
+});
+
+        function loadGroups() {
+            fetch('/api/groups')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const container = document.getElementById('groupsContainer');
+                        container.innerHTML = data.data.map(g =>
+                            `<button class="group-btn" onclick="selectGroup(${g.id}, '${g.name}')">${g.name}</button>`
+                        ).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Помилка завантаження груп:', error);
+                });
+        }
+        function backToMain() {
+            // Видаляємо параметр з URL
+            const url = new URL(window.location);
+            url.searchParams.delete('group');
+            window.history.pushState({}, '', url);
+
+            document.getElementById('mainPage').style.display = 'block';
+            document.getElementById('schedulePage').style.display = 'none';
+        }
+
+        function copyShareLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                // Створюємо маленьке сповіщення
+                const toast = document.createElement('div');
+                toast.textContent = '✓ Скопійовано';
+                toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            animation: fadeInOut 2s ease;
+        `;
+
+                // Додаємо анімацію
+                const style = document.createElement('style');
+                style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+                document.head.appendChild(style);
+
+                document.body.appendChild(toast);
+
+                // Видаляємо через 2 секунди
+                setTimeout(() => {
+                    toast.remove();
+                    style.remove();
+                }, 2000);
+            }).catch(() => {
+                // Якщо помилка - тихо ігноруємо
+                console.log('Не вдалося скопіювати');
+            });
+        }
+
+        function loadSchedule() {
+            fetch('/api/schedule/' + currentGroup)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        allSchedule = data.data;
+                        displaySchedule();
+                    }
+                });
+        }
+
+        function loadSubstitutions() {
+            fetch('/api/substitutions/' + currentGroup)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        allSubstitutions = data.data;
+                        displaySchedule();
+                    }
+                });
+        }
+
+function displaySchedule() {
+    const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+    const container = document.getElementById('daysCards');
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    let html = '';
+
+    for (let day = 1; day <= 6; day++) {
+        html += `<div class="day-card">`;
+        html += `<div class="day-header">${days[day - 1]}</div>`;
+        html += `<div class="pairs-list">`;
+
+        for (let pair = 1; pair <= 5; pair++) {
+            const pairs = allSchedule.filter(s => s.day == day && s.pair == pair);
+
+            // Фільтруємо заміни з урахуванням часу
+            const pairSubstitutions = allSubstitutions.filter(s => {
+                let subDate;
+                if (s.date.includes('T')) {
+                    subDate = new Date(s.date);
+                } else {
+                    subDate = new Date(s.date + 'T12:00:00');
+                }
+
+                const subDayOfWeek = subDate.getDay();
+                let subDay = subDayOfWeek;
+                if (subDayOfWeek === 0) subDay = 7;
+
+                // Перевіряємо, чи це той самий день
+                if (subDay !== day || s.pair != pair) return false;
+
+                // Якщо дата заміни більша за сьогодні — майбутня, показуємо
+                if (subDate > today) return true;
+
+                // Якщо дата заміни дорівнює сьогодні — перевіряємо час
+                if (subDate.toDateString() === today.toDateString()) {
+                    // До 15:00 — показуємо
+                    if (currentHour < 15) return true;
+                    // Рівно 15:00 — показуємо
+                    if (currentHour === 15 && currentMinutes === 0) return true;
+                    // Після 15:00 — не показуємо
+                    return false;
+                }
+
+                // Минула дата — не показуємо
+                return false;
+            });
+
+            const hasSubstitution = pairSubstitutions.length > 0;
+
+            html += `<div class="pair-card ${hasSubstitution ? 'substitution-active' : ''}">`;
+            html += `<div class="pair-number">Пара ${pair}`;
+            if (hasSubstitution) {
+                html += `<span class="substitution-badge">Заміна</span>`;
+            }
+            html += `</div>`;
+
+            if (hasSubstitution) {
+                const substitutionItems = [];
+                pairSubstitutions.forEach(s => {
+                    const t = templates.find(tm => tm.id == s.template_id);
+                    if (t) {
+                        substitutionItems.push({
+                            subject: t.subject,
+                            room: t.room,
+                            teacher: t.teacher
+                        });
+                    }
+                });
+
+                const grouped = {};
+                substitutionItems.forEach(item => {
+                    if (!grouped[item.subject]) {
+                        grouped[item.subject] = [];
+                    }
+                    grouped[item.subject].push(item);
+                });
+
+                if (Object.keys(grouped).length === 2) {
+                    const subjects = Object.keys(grouped);
+
+                    html += `<div class="alternating-container">`;
+
+                    // Перший предмет
+                    const firstItems = grouped[subjects[0]];
+                    html += `<div style="flex: 1;">`;
+                    html += `<div class="block-title numerator-title">Чисельник</div>`;
+                    html += `<div class="block-subject" title="${subjects[0]}">${subjects[0]}</div>`;
+                    html += `<div class="block-details">`;
+                    firstItems.forEach((item, index) => {
+                        html += `${item.room}, ${item.teacher}`;
+                        if (index < firstItems.length - 1) {
+                            html += ` / `;
+                        }
+                    });
+                    html += `</div>`;
+                    html += `</div>`;
+
+                    // Другий предмет
+                    const secondItems = grouped[subjects[1]];
+                    html += `<div style="flex: 1;">`;
+                    html += `<div class="block-title denominator-title">Знаменник</div>`;
+                    html += `<div class="block-subject" title="${subjects[1]}">${subjects[1]}</div>`;
+                    html += `<div class="block-details">`;
+                    secondItems.forEach((item, index) => {
+                        html += `${item.room}, ${item.teacher}`;
+                        if (index < secondItems.length - 1) {
+                            html += ` / `;
+                        }
+                    });
+                    html += `</div>`;
+                    html += `</div>`;
+
+                    html += `</div>`;
+                } else {
+                    // Звичайна пара (один предмет)
+                    for (let subject in grouped) {
+                        const items = grouped[subject];
+                        html += `<div class="pair-subject">${subject}</div>`;
+                        html += `<div class="pair-details">`;
+                        items.forEach((item, index) => {
+                            html += `${item.room}, ${item.teacher}`;
+                            if (index < items.length - 1) {
+                                html += ` / `;
+                            }
+                        });
+                        html += `</div>`;
+                    }
+                }
+            } else if (pairs.length > 0) {
+                // Решта коду для звичайного розкладу (без змін)
+                const numeratorItems = [];
+                const denominatorItems = [];
+                const bothItems = [];
+
+                pairs.forEach(p => {
+                    const t = templates.find(tm => tm.id == p.template_id);
+                    if (t) {
+                        if (p.week_type === 'numerator') {
+                            numeratorItems.push({
+                                subject: t.subject,
+                                room: t.room,
+                                teacher: t.teacher
+                            });
+                        } else if (p.week_type === 'denominator') {
+                            denominatorItems.push({
+                                subject: t.subject,
+                                room: t.room,
+                                teacher: t.teacher
+                            });
+                        } else if (p.week_type === 'both') {
+                            bothItems.push({
+                                subject: t.subject,
+                                room: t.room,
+                                teacher: t.teacher
+                            });
+                        }
+                    }
+                });
+
+                if (bothItems.length > 0) {
+                    const grouped = {};
+                    bothItems.forEach(item => {
+                        if (!grouped[item.subject]) {
+                            grouped[item.subject] = [];
+                        }
+                        grouped[item.subject].push(item);
+                    });
+
+                    for (let subject in grouped) {
+                        const items = grouped[subject];
+                        html += `<div class="pair-subject">${subject}</div>`;
+                        html += `<div class="pair-details">`;
+                        items.forEach((item, index) => {
+                            html += `${item.room}, ${item.teacher}`;
+                            if (index < items.length - 1) {
+                                html += ` / `;
+                            }
+                        });
+                        html += `</div>`;
+                    }
+                }
+                else if (numeratorItems.length > 0 || denominatorItems.length > 0) {
+                    html += `<div class="alternating-container">`;
+
+                    if (numeratorItems.length > 0) {
+                        const numeratorGrouped = {};
+                        numeratorItems.forEach(item => {
+                            if (!numeratorGrouped[item.subject]) {
+                                numeratorGrouped[item.subject] = [];
+                            }
+                            numeratorGrouped[item.subject].push(item);
+                        });
+
+                        for (let subject in numeratorGrouped) {
+                            const items = numeratorGrouped[subject];
+                            html += `<div style="flex: 1;">`;
+                            html += `<div class="block-title numerator-title">Чисельник</div>`;
+                            html += `<div class="block-subject" title="${subject}">${subject}</div>`;
+                            html += `<div class="block-details">`;
+                            items.forEach((item, index) => {
+                                html += `${item.room}, ${item.teacher}`;
+                                if (index < items.length - 1) {
+                                    html += ` / `;
+                                }
+                            });
+                            html += `</div>`;
+                            html += `</div>`;
+                        }
+                    }
+
+                    if (denominatorItems.length > 0) {
+                        const denominatorGrouped = {};
+                        denominatorItems.forEach(item => {
+                            if (!denominatorGrouped[item.subject]) {
+                                denominatorGrouped[item.subject] = [];
+                            }
+                            denominatorGrouped[item.subject].push(item);
+                        });
+
+                        for (let subject in denominatorGrouped) {
+                            const items = denominatorGrouped[subject];
+                            html += `<div style="flex: 1;">`;
+                            html += `<div class="block-title denominator-title">Знаменник</div>`;
+                            html += `<div class="block-subject" title="${subject}">${subject}</div>`;
+                            html += `<div class="block-details">`;
+                            items.forEach((item, index) => {
+                                html += `${item.room}, ${item.teacher}`;
+                                if (index < items.length - 1) {
+                                    html += ` / `;
+                                }
+                            });
+                            html += `</div>`;
+                            html += `</div>`;
+                        }
+                    }
+
+                    html += `</div>`;
+                }
+            } else {
+                html += `<div class="no-pair">Немає пари</div>`;
+            }
+
+            html += `</div>`;
+        }
+
+        html += `</div>`;
+        html += `</div>`;
+    }
+
+    container.innerHTML = html;
+}
+    </script>
+</body>
+
+</html>
