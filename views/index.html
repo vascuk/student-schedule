@@ -561,105 +561,54 @@
                 });
         }
 
+ 
 
+function selectGroup(groupId, groupName) {
+    currentGroup = groupId;
 
-        // Додайте цю функцію для відновлення при завантаженні сторінки
-        function restoreFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const groupId = urlParams.get('group');
+    // Оновлюємо URL
+    const url = new URL(window.location);
+    url.searchParams.set('group', groupId);
+    window.history.pushState({}, '', url);
 
-            if (groupId) {
-                currentGroup = parseInt(groupId);
+    // Зберігаємо в localStorage
+    localStorage.setItem('lastGroupId', groupId);
+    localStorage.setItem('lastGroupName', groupName);
 
-                // Спроба відновити назву з sessionStorage
-                const savedName = sessionStorage.getItem('groupName_' + groupId);
-                if (savedName) {
-                    document.getElementById('groupTitle').textContent = savedName;
-                    document.getElementById('mainPage').style.display = 'none';
-                    document.getElementById('schedulePage').style.display = 'block';
-                    loadSchedule();
-                    loadSubstitutions();
-                } else {
-                    // Якщо немає в sessionStorage, завантажуємо з сервера
-                    fetch('/api/groups/' + groupId)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                document.getElementById('groupTitle').textContent = data.data.name;
-                                sessionStorage.setItem('groupName_' + groupId, data.data.name);
-                                document.getElementById('mainPage').style.display = 'none';
-                                document.getElementById('schedulePage').style.display = 'block';
-                                loadSchedule();
-                                loadSubstitutions();
-                            }
-                        });
+    document.getElementById('groupTitle').textContent = groupName;
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('schedulePage').style.display = 'block';
+
+    loadSchedule();
+    loadSubstitutions();
+}
+// При завантаженні
+document.addEventListener('DOMContentLoaded', function() {
+    loadGroups();
+    loadTemplates();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupId = urlParams.get('group');
+    
+    if (groupId) {
+        // Якщо є в URL — використовуємо його
+        fetch('/api/groups/' + groupId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    selectGroup(parseInt(groupId), data.data.name);
                 }
-            }
+            });
+    } else {
+        // Якщо немає в URL — перевіряємо localStorage
+        const lastGroupId = localStorage.getItem('lastGroupId');
+        const lastGroupName = localStorage.getItem('lastGroupName');
+        
+        if (lastGroupId && lastGroupName) {
+            selectGroup(parseInt(lastGroupId), lastGroupName);
         }
-
-        // Оновіть DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
-            loadGroups();
-            loadTemplates();
-            restoreFromUrl(); // Додайте цей виклик
-        });
-        // Оновіть DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
-            loadGroups();
-            loadTemplates();
-
-            // Перевіряємо URL відразу після завантаження
-            const urlParams = new URLSearchParams(window.location.search);
-            const groupId = urlParams.get('group');
-
-            if (groupId) {
-                // Чекаємо поки завантажаться групи
-                const checkGroups = setInterval(() => {
-                    const groupsContainer = document.getElementById('groupsContainer');
-                    if (groupsContainer && groupsContainer.children.length > 0) {
-                        clearInterval(checkGroups);
-                        // Знаходимо групу в списку
-                        const groups = Array.from(groupsContainer.children);
-                        const groupButton = groups.find(btn => btn.getAttribute('onclick')?.includes(`selectGroup(${groupId}`));
-
-                        if (groupButton) {
-                            // Отримуємо назву групи з кнопки
-                            const groupName = groupButton.textContent;
-                            selectGroup(parseInt(groupId), groupName);
-                        } else {
-                            // Якщо група не знайдена в списку, завантажуємо з сервера
-                            fetch('/api/groups/' + groupId)
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        selectGroup(parseInt(groupId), data.data.name);
-                                    }
-                                });
-                        }
-                    }
-                }, 100);
-            }
-        });
-
-        function selectGroup(groupId, groupName) {
-            currentGroup = groupId;
-
-            // Оновлюємо URL без перезавантаження сторінки
-            const url = new URL(window.location);
-            url.searchParams.set('group', groupId);
-            window.history.pushState({}, '', url);
-
-            // Встановлюємо назву групи
-            document.getElementById('groupTitle').textContent = groupName;
-
-            // Ховаємо головну і показуємо розклад
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('schedulePage').style.display = 'block';
-
-            // Завантажуємо дані
-            loadSchedule();
-            loadSubstitutions();
-        }
+    } 
+});
 
         function loadGroups() {
             fetch('/api/groups')
