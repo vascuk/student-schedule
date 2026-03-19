@@ -755,238 +755,262 @@
                 });
         }
 
-        function displaySchedule() {
-            const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
-            const container = document.getElementById('daysCards');
+function displaySchedule() {
+    const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+    const container = document.getElementById('daysCards');
 
-            let html = '';
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
 
-            for (let day = 1; day <= 6; day++) {
-                html += `<div class="day-card">`;
-                html += `<div class="day-header">${days[day - 1]}</div>`;
-                html += `<div class="pairs-list">`;
+    let html = '';
 
-                for (let pair = 1; pair <= 5; pair++) {
-                    const pairs = allSchedule.filter(s => s.day == day && s.pair == pair);
+    for (let day = 1; day <= 6; day++) {
+        html += `<div class="day-card">`;
+        html += `<div class="day-header">${days[day - 1]}</div>`;
+        html += `<div class="pairs-list">`;
 
-                    const pairSubstitutions = allSubstitutions.filter(s => {
-                        let subDate;
-                        if (s.date.includes('T')) {
-                            subDate = new Date(s.date);
-                        } else {
-                            subDate = new Date(s.date + 'T12:00:00');
-                        }
+        for (let pair = 1; pair <= 5; pair++) {
+            const pairs = allSchedule.filter(s => s.day == day && s.pair == pair);
 
-                        const subDayOfWeek = subDate.getDay();
-                        let subDay = subDayOfWeek;
-                        if (subDayOfWeek === 0) subDay = 7;
+            // Фільтруємо заміни з урахуванням часу
+            const pairSubstitutions = allSubstitutions.filter(s => {
+                let subDate;
+                if (s.date.includes('T')) {
+                    subDate = new Date(s.date);
+                } else {
+                    subDate = new Date(s.date + 'T12:00:00');
+                }
 
-                        return subDay === day && s.pair == pair;
-                    });
+                const subDayOfWeek = subDate.getDay();
+                let subDay = subDayOfWeek;
+                if (subDayOfWeek === 0) subDay = 7;
 
-                    const hasSubstitution = pairSubstitutions.length > 0;
+                // Перевіряємо, чи це той самий день
+                if (subDay !== day || s.pair != pair) return false;
 
-                    html += `<div class="pair-card ${hasSubstitution ? 'substitution-active' : ''}">`;
-                    html += `<div class="pair-number">Пара ${pair}`;
-                    if (hasSubstitution) {
-                        html += `<span class="substitution-badge">Заміна</span>`;
+                // Якщо дата заміни більша за сьогодні — майбутня, показуємо
+                if (subDate > today) return true;
+
+                // Якщо дата заміни дорівнює сьогодні — перевіряємо час
+                if (subDate.toDateString() === today.toDateString()) {
+                    // До 15:00 — показуємо
+                    if (currentHour < 15) return true;
+                    // Рівно 15:00 — показуємо
+                    if (currentHour === 15 && currentMinutes === 0) return true;
+                    // Після 15:00 — не показуємо
+                    return false;
+                }
+
+                // Минула дата — не показуємо
+                return false;
+            });
+
+            const hasSubstitution = pairSubstitutions.length > 0;
+
+            html += `<div class="pair-card ${hasSubstitution ? 'substitution-active' : ''}">`;
+            html += `<div class="pair-number">Пара ${pair}`;
+            if (hasSubstitution) {
+                html += `<span class="substitution-badge">Заміна</span>`;
+            }
+            html += `</div>`;
+
+            if (hasSubstitution) {
+                const substitutionItems = [];
+                pairSubstitutions.forEach(s => {
+                    const t = templates.find(tm => tm.id == s.template_id);
+                    if (t) {
+                        substitutionItems.push({
+                            subject: t.subject,
+                            room: t.room,
+                            teacher: t.teacher
+                        });
                     }
+                });
+
+                const grouped = {};
+                substitutionItems.forEach(item => {
+                    if (!grouped[item.subject]) {
+                        grouped[item.subject] = [];
+                    }
+                    grouped[item.subject].push(item);
+                });
+
+                if (Object.keys(grouped).length === 2) {
+                    const subjects = Object.keys(grouped);
+
+                    html += `<div class="alternating-container">`;
+
+                    // Перший предмет
+                    const firstItems = grouped[subjects[0]];
+                    html += `<div style="flex: 1;">`;
+                    html += `<div class="block-title numerator-title">Чисельник</div>`;
+                    html += `<div class="block-subject" title="${subjects[0]}">${subjects[0]}</div>`;
+                    html += `<div class="block-details">`;
+                    firstItems.forEach((item, index) => {
+                        html += `${item.room}, ${item.teacher}`;
+                        if (index < firstItems.length - 1) {
+                            html += ` / `;
+                        }
+                    });
+                    html += `</div>`;
                     html += `</div>`;
 
-                    if (hasSubstitution) {
-                        const substitutionItems = [];
-                        pairSubstitutions.forEach(s => {
-                            const t = templates.find(tm => tm.id == s.template_id);
-                            if (t) {
-                                substitutionItems.push({
-                                    subject: t.subject,
-                                    room: t.room,
-                                    teacher: t.teacher
-                                });
+                    // Другий предмет
+                    const secondItems = grouped[subjects[1]];
+                    html += `<div style="flex: 1;">`;
+                    html += `<div class="block-title denominator-title">Знаменник</div>`;
+                    html += `<div class="block-subject" title="${subjects[1]}">${subjects[1]}</div>`;
+                    html += `<div class="block-details">`;
+                    secondItems.forEach((item, index) => {
+                        html += `${item.room}, ${item.teacher}`;
+                        if (index < secondItems.length - 1) {
+                            html += ` / `;
+                        }
+                    });
+                    html += `</div>`;
+                    html += `</div>`;
+
+                    html += `</div>`;
+                } else {
+                    // Звичайна пара (один предмет)
+                    for (let subject in grouped) {
+                        const items = grouped[subject];
+                        html += `<div class="pair-subject">${subject}</div>`;
+                        html += `<div class="pair-details">`;
+                        items.forEach((item, index) => {
+                            html += `${item.room}, ${item.teacher}`;
+                            if (index < items.length - 1) {
+                                html += ` / `;
                             }
                         });
+                        html += `</div>`;
+                    }
+                }
+            } else if (pairs.length > 0) {
+                // Решта коду для звичайного розкладу (без змін)
+                const numeratorItems = [];
+                const denominatorItems = [];
+                const bothItems = [];
 
-                        const grouped = {};
-                        substitutionItems.forEach(item => {
-                            if (!grouped[item.subject]) {
-                                grouped[item.subject] = [];
+                pairs.forEach(p => {
+                    const t = templates.find(tm => tm.id == p.template_id);
+                    if (t) {
+                        if (p.week_type === 'numerator') {
+                            numeratorItems.push({
+                                subject: t.subject,
+                                room: t.room,
+                                teacher: t.teacher
+                            });
+                        } else if (p.week_type === 'denominator') {
+                            denominatorItems.push({
+                                subject: t.subject,
+                                room: t.room,
+                                teacher: t.teacher
+                            });
+                        } else if (p.week_type === 'both') {
+                            bothItems.push({
+                                subject: t.subject,
+                                room: t.room,
+                                teacher: t.teacher
+                            });
+                        }
+                    }
+                });
+
+                if (bothItems.length > 0) {
+                    const grouped = {};
+                    bothItems.forEach(item => {
+                        if (!grouped[item.subject]) {
+                            grouped[item.subject] = [];
+                        }
+                        grouped[item.subject].push(item);
+                    });
+
+                    for (let subject in grouped) {
+                        const items = grouped[subject];
+                        html += `<div class="pair-subject">${subject}</div>`;
+                        html += `<div class="pair-details">`;
+                        items.forEach((item, index) => {
+                            html += `${item.room}, ${item.teacher}`;
+                            if (index < items.length - 1) {
+                                html += ` / `;
                             }
-                            grouped[item.subject].push(item);
+                        });
+                        html += `</div>`;
+                    }
+                }
+                else if (numeratorItems.length > 0 || denominatorItems.length > 0) {
+                    html += `<div class="alternating-container">`;
+
+                    if (numeratorItems.length > 0) {
+                        const numeratorGrouped = {};
+                        numeratorItems.forEach(item => {
+                            if (!numeratorGrouped[item.subject]) {
+                                numeratorGrouped[item.subject] = [];
+                            }
+                            numeratorGrouped[item.subject].push(item);
                         });
 
-                        if (Object.keys(grouped).length === 2) {
-                            const subjects = Object.keys(grouped);
-
-                            html += `<div class="alternating-container">`;
-
-                            // Перший предмет
-                            const firstItems = grouped[subjects[0]];
+                        for (let subject in numeratorGrouped) {
+                            const items = numeratorGrouped[subject];
                             html += `<div style="flex: 1;">`;
                             html += `<div class="block-title numerator-title">Чисельник</div>`;
-                            html += `<div class="block-subject" title="${subjects[0]}">${subjects[0]}</div>`;
+                            html += `<div class="block-subject" title="${subject}">${subject}</div>`;
                             html += `<div class="block-details">`;
-                            firstItems.forEach((item, index) => {
+                            items.forEach((item, index) => {
                                 html += `${item.room}, ${item.teacher}`;
-                                if (index < firstItems.length - 1) {
+                                if (index < items.length - 1) {
                                     html += ` / `;
                                 }
                             });
                             html += `</div>`;
                             html += `</div>`;
-
-                            // Другий предмет
-                            const secondItems = grouped[subjects[1]];
-                            html += `<div style="flex: 1;">`;
-                            html += `<div class="block-title denominator-title">Знаменник</div>`;
-                            html += `<div class="block-subject" title="${subjects[1]}">${subjects[1]}</div>`;
-                            html += `<div class="block-details">`;
-                            secondItems.forEach((item, index) => {
-                                html += `${item.room}, ${item.teacher}`;
-                                if (index < secondItems.length - 1) {
-                                    html += ` / `;
-                                }
-                            });
-                            html += `</div>`;
-                            html += `</div>`;
-
-                            html += `</div>`;
-                        } else {
-                            // Звичайна пара (один предмет)
-                            for (let subject in grouped) {
-                                const items = grouped[subject];
-                                html += `<div class="pair-subject">${subject}</div>`;
-                                html += `<div class="pair-details">`;
-                                items.forEach((item, index) => {
-                                    html += `${item.room}, ${item.teacher}`;
-                                    if (index < items.length - 1) {
-                                        html += ` / `;
-                                    }
-                                });
-                                html += `</div>`;
-                            }
                         }
-                    } else if (pairs.length > 0) {
-                        const numeratorItems = [];
-                        const denominatorItems = [];
-                        const bothItems = [];
+                    }
 
-                        pairs.forEach(p => {
-                            const t = templates.find(tm => tm.id == p.template_id);
-                            if (t) {
-                                if (p.week_type === 'numerator') {
-                                    numeratorItems.push({
-                                        subject: t.subject,
-                                        room: t.room,
-                                        teacher: t.teacher
-                                    });
-                                } else if (p.week_type === 'denominator') {
-                                    denominatorItems.push({
-                                        subject: t.subject,
-                                        room: t.room,
-                                        teacher: t.teacher
-                                    });
-                                } else if (p.week_type === 'both') {
-                                    bothItems.push({
-                                        subject: t.subject,
-                                        room: t.room,
-                                        teacher: t.teacher
-                                    });
-                                }
+                    if (denominatorItems.length > 0) {
+                        const denominatorGrouped = {};
+                        denominatorItems.forEach(item => {
+                            if (!denominatorGrouped[item.subject]) {
+                                denominatorGrouped[item.subject] = [];
                             }
+                            denominatorGrouped[item.subject].push(item);
                         });
 
-                        if (bothItems.length > 0) {
-                            const grouped = {};
-                            bothItems.forEach(item => {
-                                if (!grouped[item.subject]) {
-                                    grouped[item.subject] = [];
+                        for (let subject in denominatorGrouped) {
+                            const items = denominatorGrouped[subject];
+                            html += `<div style="flex: 1;">`;
+                            html += `<div class="block-title denominator-title">Знаменник</div>`;
+                            html += `<div class="block-subject" title="${subject}">${subject}</div>`;
+                            html += `<div class="block-details">`;
+                            items.forEach((item, index) => {
+                                html += `${item.room}, ${item.teacher}`;
+                                if (index < items.length - 1) {
+                                    html += ` / `;
                                 }
-                                grouped[item.subject].push(item);
                             });
-
-                            for (let subject in grouped) {
-                                const items = grouped[subject];
-                                html += `<div class="pair-subject">${subject}</div>`;
-                                html += `<div class="pair-details">`;
-                                items.forEach((item, index) => {
-                                    html += `${item.room}, ${item.teacher}`;
-                                    if (index < items.length - 1) {
-                                        html += ` / `;
-                                    }
-                                });
-                                html += `</div>`;
-                            }
-                        }
-                        else if (numeratorItems.length > 0 || denominatorItems.length > 0) {
-                            html += `<div class="alternating-container">`;
-
-                            if (numeratorItems.length > 0) {
-                                const numeratorGrouped = {};
-                                numeratorItems.forEach(item => {
-                                    if (!numeratorGrouped[item.subject]) {
-                                        numeratorGrouped[item.subject] = [];
-                                    }
-                                    numeratorGrouped[item.subject].push(item);
-                                });
-
-                                for (let subject in numeratorGrouped) {
-                                    const items = numeratorGrouped[subject];
-                                    html += `<div style="flex: 1;">`;
-                                    html += `<div class="block-title numerator-title">Чисельник</div>`;
-                                    html += `<div class="block-subject" title="${subject}">${subject}</div>`;
-                                    html += `<div class="block-details">`;
-                                    items.forEach((item, index) => {
-                                        html += `${item.room}, ${item.teacher}`;
-                                        if (index < items.length - 1) {
-                                            html += ` / `;
-                                        }
-                                    });
-                                    html += `</div>`;
-                                    html += `</div>`;
-                                }
-                            }
-
-                            if (denominatorItems.length > 0) {
-                                const denominatorGrouped = {};
-                                denominatorItems.forEach(item => {
-                                    if (!denominatorGrouped[item.subject]) {
-                                        denominatorGrouped[item.subject] = [];
-                                    }
-                                    denominatorGrouped[item.subject].push(item);
-                                });
-
-                                for (let subject in denominatorGrouped) {
-                                    const items = denominatorGrouped[subject];
-                                    html += `<div style="flex: 1;">`;
-                                    html += `<div class="block-title denominator-title">Знаменник</div>`;
-                                    html += `<div class="block-subject" title="${subject}">${subject}</div>`;
-                                    html += `<div class="block-details">`;
-                                    items.forEach((item, index) => {
-                                        html += `${item.room}, ${item.teacher}`;
-                                        if (index < items.length - 1) {
-                                            html += ` / `;
-                                        }
-                                    });
-                                    html += `</div>`;
-                                    html += `</div>`;
-                                }
-                            }
-
+                            html += `</div>`;
                             html += `</div>`;
                         }
-                    } else {
-                        html += `<div class="no-pair">Немає пари</div>`;
                     }
 
                     html += `</div>`;
                 }
-
-                html += `</div>`;
-                html += `</div>`;
+            } else {
+                html += `<div class="no-pair">Немає пари</div>`;
             }
 
-            container.innerHTML = html;
+            html += `</div>`;
         }
+
+        html += `</div>`;
+        html += `</div>`;
+    }
+
+    container.innerHTML = html;
+}
     </script>
 </body>
 

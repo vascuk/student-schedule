@@ -770,7 +770,8 @@
                 </div>
                 <div class="pair-type-content" id="constantContent">
                     <div id="constantKomplekty"></div>
-                    <button class="add-komplekt-btn" onclick="addKomplekt('constant')">+ Додати комплект (для підгруп)</button>
+                    <button class="add-komplekt-btn" onclick="addKomplekt('constant')">+ Додати комплект (для
+                        підгруп)</button>
                 </div>
             </div>
 
@@ -786,13 +787,15 @@
                         <div class="week-block">
                             <div class="week-title numerator-title">ЧИСЕЛЬНИК</div>
                             <div id="numeratorKomplekty"></div>
-                            <button class="add-komplekt-btn" onclick="addKomplekt('numerator')">+ Додати комплект (підгрупи)</button>
+                            <button class="add-komplekt-btn" onclick="addKomplekt('numerator')">+ Додати комплект
+                                (підгрупи)</button>
                         </div>
                         <!-- ЗНАМЕННИК -->
                         <div class="week-block">
                             <div class="week-title denominator-title">ЗНАМЕННИК</div>
                             <div id="denominatorKomplekty"></div>
-                            <button class="add-komplekt-btn" onclick="addKomplekt('denominator')">+ Додати комплект (підгрупи)</button>
+                            <button class="add-komplekt-btn" onclick="addKomplekt('denominator')">+ Додати комплект
+                                (підгрупи)</button>
                         </div>
                     </div>
                 </div>
@@ -1970,7 +1973,7 @@
             const currentHour = now.getHours();
             const currentMinutes = now.getMinutes();
 
-            // Фільтруємо активні заміни
+            // Фільтруємо активні заміни (дата більша за сьогодні, або сьогодні до 15:00)
             const activeSubstitutions = substitutions.filter(s => {
                 let subDate;
                 if (s.date.includes('T')) {
@@ -1979,11 +1982,20 @@
                     subDate = new Date(s.date + 'T12:00:00');
                 }
 
+                // Якщо дата заміни більша за сьогодні — майбутня, показуємо
                 if (subDate > today) return true;
+
+                // Якщо дата заміни дорівнює сьогодні — перевіряємо час
                 if (subDate.toDateString() === today.toDateString()) {
+                    // До 15:00 — показуємо
                     if (currentHour < 15) return true;
+                    // Рівно 15:00 — показуємо
                     if (currentHour === 15 && currentMinutes === 0) return true;
+                    // Після 15:00 — не показуємо
+                    return false;
                 }
+
+                // Минула дата — не показуємо
                 return false;
             });
 
@@ -2057,7 +2069,7 @@
                             displayText = `Сьогодні (ще ${mins} хв)`;
                         }
                     } else {
-                        displayText = 'Сьогодні';
+                        displayText = 'Сьогодні (пара вже минула)';
                     }
                 } else {
                     displayText = `${dayName}, ${dateStr}`;
@@ -2096,7 +2108,6 @@
         `;
             }).join('');
         }
-
         // Нова функція для видалення всіх замін на конкретну дату і пару
         function deleteSubstitutionForGroup(dateStr, pair) {
             if (!confirm(`Видалити всі заміни на ${dateStr} пара ${pair}?`)) return;
