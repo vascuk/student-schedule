@@ -601,12 +601,6 @@
         document.addEventListener('DOMContentLoaded', function () {
             loadGroups();
             loadTemplates();
-            restoreFromUrl(); // Додайте цей виклик
-        });
-        // Оновіть DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function () {
-            loadGroups();
-            loadTemplates();
 
             // Перевіряємо URL відразу після завантаження
             const urlParams = new URLSearchParams(window.location.search);
@@ -687,7 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (lastGroupId && lastGroupName) {
             selectGroup(parseInt(lastGroupId), lastGroupName);
         }
-    }
+    } 
 });
 
         function loadGroups() {
