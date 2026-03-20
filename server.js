@@ -349,8 +349,34 @@ app.get('/api/substitutions/all', (req, res) => {
         }
     });
 });
+app.get('/api/teacher-schedule/:teacherName', (req, res) => {
+    const teacherName = decodeURIComponent(req.params.teacherName);
+    const weekType = getWeekType();
 
-
+    db.query(`
+        SELECT s.*, g.name as group_name, t.subject, t.room, t.teacher
+        FROM schedule s
+        JOIN templates t ON s.template_id = t.id
+        JOIN \`groups\` g ON s.group_id = g.id
+        WHERE t.teacher = ? AND (s.week_type = ? OR s.week_type = 'both')
+        ORDER BY s.day, s.pair
+    `, [teacherName, weekType], (err, results) => {
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, data: results });
+        }
+    });
+});
+app.get('/api/substitutions/all', (req, res) => {
+    db.query('SELECT * FROM substitutions ORDER BY date DESC', (err, results) => {
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, data: results });
+        }
+    });
+});
 app.listen(PORT, () => {
     console.log(`Сервер запущено на http://localhost:${PORT}`);
     console.log(`Адмін панель: http://localhost:${PORT}/admin`);
