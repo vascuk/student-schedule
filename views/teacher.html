@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розклад викладачів - НЕМК</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .college-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 20px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .college-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            max-width: 800px;
+            margin: 0 auto 5px;
+        }
+
+        .college-header h1 span {
+            color: #38bdf8;
+        }
+
+        .college-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1e293b;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+        }
+
+        .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .teacher-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 16px 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .teacher-btn:hover {
+            background: #f8fafc;
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.3);
+        }
+
+        .schedule-page {
+            display: none;
+        }
+
+        .schedule-header {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .back-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .teacher-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0f172a;
+            flex: 1;
+        }
+
+        .days-cards {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .day-header {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pairs-list {
+            padding: 12px;
+        }
+
+        .pair-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .pair-card.substitution-active {
+            background: #fff1f0;
+            border-color: #f87171;
+        }
+
+        .pair-number {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .substitution-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .pair-subject {
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .pair-details {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .group-name {
+            font-size: 11px;
+            color: #38bdf8;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .no-pair {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 1200px) {
+            .days-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .days-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .schedule-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .teachers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .days-cards {
+                grid-template-columns: 1fr;
+            }
+            .teachers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #334155;
+        }
+
+        .footer-link {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="college-header">
+        <h1>Нововолинський <span>електромеханічний</span> фаховий коледж</h1>
+        <p>Розклад викладачів</p>
+    </div>
+
+    <div class="container" id="mainPage">
+        <div class="section-title">
+            <h2>Виберіть викладача</h2>
+        </div>
+        <div class="teachers-grid" id="teachersContainer"></div>
+    </div>
+
+    <div class="container schedule-page" id="schedulePage">
+        <div class="schedule-header">
+            <button class="back-btn" onclick="backToMain()">← На головну</button>
+            <h2 class="teacher-title" id="teacherTitle"></h2>
+            <button class="back-btn" onclick="copyShareLink()">🔗 Поділитися</button>
+        </div>
+        <div id="daysCards" class="days-cards"></div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">Розклад створено за підтримки студентського самоврядування</p>
+            <a href="https://nemk.com.ua" target="_blank" class="footer-link">Нововолинський електромеханічний фаховий коледж</a>
+            <p class="footer-developer">Розробник: <span>Ващук Роман</span></p>
+        </div>
+    </footer>
+
+    <script>
+        let currentTeacher = null;
+        let templates = [];
+        let allSchedule = [];
+        let allSubstitutions = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTeachers();
+            loadTemplates();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const teacher = decodeURIComponent(urlParams.get('teacher') || '');
+            if (teacher) {
+                selectTeacher(teacher);
+            } else {
+                const savedTeacher = localStorage.getItem('lastTeacher');
+                if (savedTeacher) selectTeacher(savedTeacher);
+            }
+        });
+
+        function loadTeachers() {
+            fetch('/api/teachers')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const container = document.getElementById('teachersContainer');
+                        container.innerHTML = data.data.map(t =>
+                            `<button class="teacher-btn" onclick="selectTeacher('${encodeURIComponent(t.name)}')">${t.name}</button>`
+                        ).join('');
+                    }
+                });
+        }
+
+        function loadTemplates() {
+            fetch('/api/templates')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) templates = data.data;
+                });
+        }
+
+        function selectTeacher(teacherName) {
+            currentTeacher = decodeURIComponent(teacherName);
+            document.getElementById('teacherTitle').textContent = currentTeacher;
+
+            const url = new URL(window.location);
+            url.searchParams.set('teacher', encodeURIComponent(currentTeacher));
+            window.history.pushState({}, '', url);
+            localStorage.setItem('lastTeacher', currentTeacher);
+
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('schedulePage').style.display = 'block';
+
+            loadTeacherSchedule();
+            loadSubstitutions();
+        }
+
+        function backToMain() {
+            const url = new URL(window.location);
+            url.searchParams.delete('teacher');
+            window.history.pushState({}, '', url);
+            document.getElementById('mainPage').style.display = 'block';
+            document.getElementById('schedulePage').style.display = 'none';
+        }
+
+        function copyShareLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Посилання скопійовано');
+        }
+
+        function loadTeacherSchedule() {
+            fetch('/api/teacher-schedule/' + encodeURIComponent(currentTeacher))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        allSchedule = data.data;
+                        displaySchedule();
+                    }
+                });
+        }
+
+        function loadSubstitutions() {
+            fetch('/api/substitutions/all')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        allSubstitutions = data.data;
+                        displaySchedule();
+                    }
+                });
+        }
+
+        function displaySchedule() {
+            const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
+            const container = document.getElementById('daysCards');
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const currentHour = now.getHours();
+
+            let html = '';
+
+            for (let day = 1; day <= 6; day++) {
+                html += `<div class="day-card"><div class="day-header">${days[day-1]}</div><div class="pairs-list">`;
+
+                for (let pair = 1; pair <= 5; pair++) {
+                    const pairs = allSchedule.filter(s => s.day == day && s.pair == pair);
+
+                    const hasSubstitution = allSubstitutions.some(s => {
+                        let subDate = new Date(s.date);
+                        return subDate.toDateString() === today.toDateString() &&
+                               subDate.getDay() === day &&
+                               s.pair == pair &&
+                               s.template_id === pairs[0]?.template_id;
+                    });
+
+                    html += `<div class="pair-card ${hasSubstitution ? 'substitution-active' : ''}">`;
+                    html += `<div class="pair-number">Пара ${pair}`;
+                    if (hasSubstitution) html += `<span class="substitution-badge">Заміна</span>`;
+                    html += `</div>`;
+
+                    if (pairs.length > 0) {
+                        pairs.forEach(p => {
+                            html += `<div class="pair-subject">${p.subject}</div>`;
+                            html += `<div class="pair-details">${p.room}, ${p.teacher}</div>`;
+                            html += `<div class="group-name">📌 ${p.group_name}</div>`;
+                        });
+                    } else {
+                        html += `<div class="no-pair">Немає пари</div>`;
+                    }
+
+                    html += `</div>`;
+                }
+
+                html += `</div></div>`;
+            }
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
