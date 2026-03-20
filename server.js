@@ -86,27 +86,18 @@ db.query(`CREATE TABLE IF NOT EXISTS substitutions (
 
 // ========== КІНЕЦЬ ІНІЦІАЛІЗАЦІЇ ==========
 
+
+// ========== MIDDLEWARE ==========
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'views')));
 app.use(session({
-    secret: 'admin_secret',
+    secret: process.env.SESSION_SECRET || 'admin_secret',
     resave: false,
-    saveUninitial: false,
+    saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// ... (тут твій код API)
-
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-    secret: 'admin_secret',
-    resave: false,
-    saveUninitial: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }
-}));
-
-// ==================== СТОРІНКИ ====================
+// ========== СТОРІНКИ ==========
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
@@ -115,7 +106,11 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'admin.html'));
 });
 
-// ==================== АВТОРИЗАЦІЯ ====================
+app.get('/teacher.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'teacher.html'));
+});
+
+// ========== АВТОРИЗАЦІЯ ==========
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     
@@ -142,13 +137,23 @@ app.post('/api/logout', (req, res) => {
     res.json({ success: true });
 });
 
-// ==================== ГРУПИ ====================
+// ========== ГРУПИ ==========
 app.get('/api/groups', (req, res) => {
     db.query('SELECT * FROM `groups` ORDER BY name', (err, results) => {
         if (err) {
             res.json({ success: false, error: err.message });
         } else {
             res.json({ success: true, data: results });
+        }
+    });
+});
+
+app.get('/api/groups/:id', (req, res) => {
+    db.query('SELECT * FROM `groups` WHERE id = ?', [req.params.id], (err, results) => {
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, data: results[0] });
         }
     });
 });
@@ -182,7 +187,7 @@ app.delete('/api/groups/:id', (req, res) => {
     });
 });
 
-// ==================== КОМПЛЕКТИ ====================
+// ========== КОМПЛЕКТИ ==========
 app.get('/api/templates', (req, res) => {
     db.query('SELECT * FROM templates ORDER BY subject', (err, results) => {
         if (err) {
@@ -223,7 +228,7 @@ app.delete('/api/templates/:id', (req, res) => {
     });
 });
 
-// ==================== РОЗКЛАД ====================
+// ========== РОЗКЛАД ==========
 app.get('/api/schedule/:groupId', (req, res) => {
     db.query('SELECT * FROM schedule WHERE group_id = ? ORDER BY day, pair', 
         [req.params.groupId], (err, results) => {
@@ -297,40 +302,39 @@ app.post('/api/schedule/delete-all', (req, res) => {
         });
 });
 
-// ==================== ЗАМІНИ ====================
-
+// ========== ЗАМІНИ ==========
 app.get('/api/substitutions/:groupId', (req, res) => {
     db.query('SELECT * FROM substitutions WHERE group_id = ? ORDER BY date DESC', 
         [req.params.groupId], (err, results) => {
-        if (err) {
-            res.json({ success: false, error: err.message });
-        } else {
-            res.json({ success: true, data: results });
-        }
-    });
+            if (err) {
+                res.json({ success: false, error: err.message });
+            } else {
+                res.json({ success: true, data: results });
+            }
+        });
 });
 
 app.post('/api/substitutions', (req, res) => {
     if (!req.session.admin) {
         return res.json({ success: false, error: 'Не авторизований' });
     }
-
+    
     const { group_id, date, pair, template_id } = req.body;
-    db.query('INSERT INTO substitutions (group_id, date, pair, template_id) VALUES (?, ?, ?, ?)', 
+    db.query('INSERT INTO substitutions (group_id, date, pair, template_id) VALUES (?, ?, ?, ?)',
         [group_id, date, pair, template_id], (err, result) => {
-        if (err) {
-            res.json({ success: false, error: err.message });
-        } else {
-            res.json({ success: true, id: result.insertId });
-        }
-    });
+            if (err) {
+                res.json({ success: false, error: err.message });
+            } else {
+                res.json({ success: true, id: result.insertId });
+            }
+        });
 });
 
 app.delete('/api/substitutions/:id', (req, res) => {
     if (!req.session.admin) {
         return res.json({ success: false, error: 'Не авторизований' });
     }
-
+    
     db.query('DELETE FROM substitutions WHERE id = ?', [req.params.id], (err) => {
         if (err) {
             res.json({ success: false, error: err.message });
@@ -340,8 +344,7 @@ app.delete('/api/substitutions/:id', (req, res) => {
     });
 });
 
-// ==================== ВСІ ЗАМІНИ ДЛЯ ВИКЛАДАЧІВ ====================
-
+// ========== ВСІ ЗАМІНИ (ДЛЯ ВИКЛАДАЧІВ) ==========
 app.get('/api/substitutions/all', (req, res) => {
     db.query('SELECT * FROM substitutions ORDER BY date DESC', (err, results) => {
         if (err) {
@@ -352,8 +355,7 @@ app.get('/api/substitutions/all', (req, res) => {
     });
 });
 
-// ==================== ВИКЛАДАЧІ ====================
-
+// ========== ВИКЛАДАЧІ ==========
 app.get('/api/teachers', (req, res) => {
     db.query('SELECT DISTINCT teacher FROM templates ORDER BY teacher', (err, results) => {
         if (err) {
@@ -384,8 +386,7 @@ app.get('/api/teacher-schedule/:teacherName', (req, res) => {
     });
 });
 
-// ==================== ФУНКЦІЯ ВИЗНАЧЕННЯ ТИЖНЯ ====================
-
+// ========== ФУНКЦІЯ ВИЗНАЧЕННЯ ТИЖНЯ ==========
 function getWeekType() {
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 1);
@@ -393,6 +394,8 @@ function getWeekType() {
     const weekNumber = Math.ceil(days / 7);
     return weekNumber % 2 === 0 ? 'numerator' : 'denominator';
 }
+
+// ========== ЗАПУСК СЕРВЕРА ==========
 app.listen(PORT, () => {
     console.log(`Сервер запущено на http://localhost:${PORT}`);
     console.log(`Адмін панель: http://localhost:${PORT}/admin`);
