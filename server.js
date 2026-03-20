@@ -339,6 +339,18 @@ app.delete('/api/substitutions/:id', (req, res) => {
     });
 });
 
+
+app.get('/api/substitutions/all', (req, res) => {
+    db.query('SELECT * FROM substitutions ORDER BY date DESC', (err, results) => {
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, data: results });
+        }
+    });
+});
+
+
 app.listen(PORT, () => {
     console.log(`Сервер запущено на http://localhost:${PORT}`);
     console.log(`Адмін панель: http://localhost:${PORT}/admin`);
