@@ -298,38 +298,39 @@ app.post('/api/schedule/delete-all', (req, res) => {
 });
 
 // ==================== ЗАМІНИ ====================
+
 app.get('/api/substitutions/:groupId', (req, res) => {
     db.query('SELECT * FROM substitutions WHERE group_id = ? ORDER BY date DESC', 
         [req.params.groupId], (err, results) => {
-            if (err) {
-                res.json({ success: false, error: err.message });
-            } else {
-                res.json({ success: true, data: results });
-            }
-        });
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, data: results });
+        }
+    });
 });
 
 app.post('/api/substitutions', (req, res) => {
     if (!req.session.admin) {
         return res.json({ success: false, error: 'Не авторизований' });
     }
-    
+
     const { group_id, date, pair, template_id } = req.body;
-    db.query('INSERT INTO substitutions (group_id, date, pair, template_id) VALUES (?, ?, ?, ?)',
+    db.query('INSERT INTO substitutions (group_id, date, pair, template_id) VALUES (?, ?, ?, ?)', 
         [group_id, date, pair, template_id], (err, result) => {
-            if (err) {
-                res.json({ success: false, error: err.message });
-            } else {
-                res.json({ success: true, id: result.insertId });
-            }
-        });
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, id: result.insertId });
+        }
+    });
 });
 
 app.delete('/api/substitutions/:id', (req, res) => {
     if (!req.session.admin) {
         return res.json({ success: false, error: 'Не авторизований' });
     }
-    
+
     db.query('DELETE FROM substitutions WHERE id = ?', [req.params.id], (err) => {
         if (err) {
             res.json({ success: false, error: err.message });
@@ -339,6 +340,7 @@ app.delete('/api/substitutions/:id', (req, res) => {
     });
 });
 
+// ==================== ВСІ ЗАМІНИ ДЛЯ ВИКЛАДАЧІВ ====================
 
 app.get('/api/substitutions/all', (req, res) => {
     db.query('SELECT * FROM substitutions ORDER BY date DESC', (err, results) => {
@@ -349,6 +351,19 @@ app.get('/api/substitutions/all', (req, res) => {
         }
     });
 });
+
+// ==================== ВИКЛАДАЧІ ====================
+
+app.get('/api/teachers', (req, res) => {
+    db.query('SELECT DISTINCT teacher FROM templates ORDER BY teacher', (err, results) => {
+        if (err) {
+            res.json({ success: false, error: err.message });
+        } else {
+            res.json({ success: true, data: results.map(t => ({ name: t.teacher })) });
+        }
+    });
+});
+
 app.get('/api/teacher-schedule/:teacherName', (req, res) => {
     const teacherName = decodeURIComponent(req.params.teacherName);
     const weekType = getWeekType();
@@ -368,15 +383,16 @@ app.get('/api/teacher-schedule/:teacherName', (req, res) => {
         }
     });
 });
-app.get('/api/substitutions/all', (req, res) => {
-    db.query('SELECT * FROM substitutions ORDER BY date DESC', (err, results) => {
-        if (err) {
-            res.json({ success: false, error: err.message });
-        } else {
-            res.json({ success: true, data: results });
-        }
-    });
-});
+
+// ==================== ФУНКЦІЯ ВИЗНАЧЕННЯ ТИЖНЯ ====================
+
+function getWeekType() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 1);
+    const days = Math.floor((now - start) / (24 * 60 * 60 * 1000));
+    const weekNumber = Math.ceil(days / 7);
+    return weekNumber % 2 === 0 ? 'numerator' : 'denominator';
+}
 app.listen(PORT, () => {
     console.log(`Сервер запущено на http://localhost:${PORT}`);
     console.log(`Адмін панель: http://localhost:${PORT}/admin`);
