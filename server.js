@@ -123,8 +123,9 @@ app.use('/admin', (req, res, next) => {
     // Отримуємо User-Agent
     const userAgent = req.headers['user-agent'] || 'невідомо';
     
-    // Отримуємо час
-    const timestamp = new Date().toISOString();
+    // Отримуємо час у правильному форматі для MySQL
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     
     // Отримуємо мову браузера
     const acceptLanguage = req.headers['accept-language'] || 'невідомо';
@@ -183,7 +184,7 @@ app.use('/admin', (req, res, next) => {
     if (queryParams !== '{}') console.log(`📝 Параметри: ${queryParams}`);
     if (bodyData) console.log(`📦 Дані форми: ${bodyData}`);
     
-    // Зберегти в базу даних
+    // Зберегти в базу даних (оновлений формат дати)
     db.query(
         `INSERT INTO admin_logs 
         (ip, user_agent, device_type, os, browser, browser_version, accept_language, referer, method, url, query_params, body_data, created_at) 
