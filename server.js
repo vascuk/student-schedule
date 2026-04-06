@@ -212,6 +212,55 @@ app.use('/admin', (req, res, next) => {
     next();
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+app.use((req, res, next) => {
+  console.log({
+    ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+    method: req.method,
+    path: req.path,
+
+    headers: {
+      userAgent: req.headers['user-agent'],
+      referer: req.headers['referer'],
+      origin: req.headers['origin'],
+      accept: req.headers['accept'],
+      acceptLanguage: req.headers['accept-language'],
+      acceptEncoding: req.headers['accept-encoding'],
+      connection: req.headers['connection']
+    },
+
+    host: req.headers['host'],
+    cookies: req.headers['cookie'],
+
+    time: new Date().toISOString()
+  });
+
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ========== СТОРІНКИ ==========
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
