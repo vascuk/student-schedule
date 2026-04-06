@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
@@ -83,9 +82,26 @@ db.query(`CREATE TABLE IF NOT EXISTS substitutions (
     else console.log('Таблиця substitutions готова');
 });
 
-
-// ========== КІНЕЦЬ ІНІЦІАЛІЗАЦІЇ ==========
-
+// ========== ТАБЛИЦЯ ДЛЯ ЛОГІВ АДМІНКИ ==========
+db.query(`CREATE TABLE IF NOT EXISTS admin_logs (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ip VARCHAR(45),
+    user_agent TEXT,
+    device_type VARCHAR(50),
+    os VARCHAR(50),
+    browser VARCHAR(50),
+    browser_version VARCHAR(20),
+    accept_language VARCHAR(100),
+    referer VARCHAR(500),
+    method VARCHAR(10),
+    url VARCHAR(500),
+    query_params TEXT,
+    body_data TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)`, (err) => {
+    if (err) console.error('Помилка створення таблиці admin_logs:', err);
+    else console.log('Таблиця admin_logs готова');
+});
 
 // ========== MIDDLEWARE ==========
 app.use(express.json());
@@ -96,6 +112,104 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
+
+// ========== ЛОГУВАННЯ АДМІН-ЗАПИТІВ ==========
+app.use('/admin', (req, res, next) => {
+    // Отримуємо IP (з урахуванням проксі)
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || 
+               req.socket.remoteAddress || 
+               req.connection.remoteAddress;
+    
+    // Отримуємо User-Agent
+    const userAgent = req.headers['user-agent'] || 'невідомо';
+    
+    // Отримуємо час
+    const timestamp = new Date().toISOString();
+    
+    // Отримуємо мову браузера
+    const acceptLanguage = req.headers['accept-language'] || 'невідомо';
+    
+    // Отримуємо реферер (звідки прийшов)
+    const referer = req.headers['referer'] || 'прямий перехід';
+    
+    // Отримуємо метод запиту
+    const method = req.method;
+    
+    // Отримуємо URL
+    const url = req.originalUrl;
+    
+    // Отримуємо параметри запиту (якщо є)
+    const queryParams = JSON.stringify(req.query);
+    
+    // Отримуємо дані форми (якщо є)
+    const bodyData = req.method === 'POST' ? JSON.stringify(req.body) : null;
+    
+    // Визначаємо тип пристрою
+    let deviceType = 'Комп\'ютер';
+    if (userAgent.includes('Mobile')) deviceType = 'Мобільний телефон';
+    else if (userAgent.includes('Tablet')) deviceType = 'Планшет';
+    
+    // Визначаємо ОС
+    let os = 'Невідомо';
+    if (userAgent.includes('Windows NT 10.0')) os = 'Windows 10/11';
+    else if (userAgent.includes('Windows NT 6.1')) os = 'Windows 7';
+    else if (userAgent.includes('Mac OS X')) os = 'macOS';
+    else if (userAgent.includes('Linux')) os = 'Linux';
+    else if (userAgent.includes('Android')) os = 'Android';
+    else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) os = 'iOS';
+    
+    // Визначаємо браузер
+    let browser = 'Невідомо';
+    if (userAgent.includes('Edg/')) browser = 'Microsoft Edge';
+    else if (userAgent.includes('Chrome/')) browser = 'Google Chrome';
+    else if (userAgent.includes('Firefox/')) browser = 'Mozilla Firefox';
+    else if (userAgent.includes('Safari/')) browser = 'Safari';
+    else if (userAgent.includes('OPR/')) browser = 'Opera';
+    
+    // Визначаємо версію браузера
+    let browserVersion = 'невідомо';
+    const versionMatch = userAgent.match(/(Chrome|Edg|Firefox|OPR)\/(\d+\.\d+)/);
+    if (versionMatch) browserVersion = versionMatch[2];
+    
+    // Виводимо в консоль
+    console.log(`\n🔐 [${timestamp}] ДОСТУП ДО АДМІНКИ`);
+    console.log(`📡 IP: ${ip}`);
+    console.log(`💻 Пристрій: ${deviceType}`);
+    console.log(`🖥️ ОС: ${os}`);
+    console.log(`🌐 Браузер: ${browser} ${browserVersion}`);
+    console.log(`🔗 URL: ${method} ${url}`);
+    console.log(`📍 Мова: ${acceptLanguage}`);
+    console.log(`🔙 Реферер: ${referer}`);
+    if (queryParams !== '{}') console.log(`📝 Параметри: ${queryParams}`);
+    if (bodyData) console.log(`📦 Дані форми: ${bodyData}`);
+    
+    // Зберегти в базу даних
+    db.query(
+        `INSERT INTO admin_logs 
+        (ip, user_agent, device_type, os, browser, browser_version, accept_language, referer, method, url, query_params, body_data, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            ip, 
+            userAgent, 
+            deviceType, 
+            os, 
+            browser, 
+            browserVersion,
+            acceptLanguage,
+            referer,
+            method,
+            url,
+            queryParams !== '{}' ? queryParams : null,
+            bodyData,
+            timestamp
+        ],
+        (err) => {
+            if (err) console.error('Помилка збереження логу:', err);
+        }
+    );
+    
+    next();
+});
 
 // ========== СТОРІНКИ ==========
 app.get('/', (req, res) => {
